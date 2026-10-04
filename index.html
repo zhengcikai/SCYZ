@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天主教学习系统 · 慕道班学习</title>
+<style>
+/* ============ 基础 ============ */
+:root{
+  --bg:#f7f3ea;          /* 暖米白 */
+  --paper:#fffdf8;
+  --ink:#2b2b2b;
+  --muted:#6b6257;
+  --primary:#1f3a5f;     /* 深蓝 */
+  --primary-soft:#e6ecf3;
+  --accent:#2f5d50;      /* 墨绿 */
+  --line:#e2d9c8;
+  --good:#2e6b3e;
+  --bad:#a83232;
+  --radius:10px;
+  --shadow:0 1px 3px rgba(60,45,20,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--ink);}
+body{
+  font-family:"Source Han Serif SC","Noto Serif CJK SC","Songti SC","SimSun",Georgia,serif;
+  line-height:1.85;
+  font-size:16px;
+}
+h1,h2,h3{font-family:"Source Han Serif SC","Noto Serif CJK SC","Songti SC","SimSun",Georgia,serif;}
+button{font-family:inherit;cursor:pointer;}
+input,select{font-family:inherit;font-size:15px;}
+
+/* ============ 顶部 ============ */
+.site-header{
+  background:var(--primary);
+  color:#f4efe2;
+  position:sticky;top:0;z-index:50;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.header-inner{
+  max-width:1080px;margin:0 auto;
+  display:flex;align-items:center;gap:16px;
+  padding:14px 20px 10px;flex-wrap:wrap;
+}
+.btn-back{
+  background:transparent;border:1px solid rgba(244,239,226,.5);
+  color:#f4efe2;border-radius:6px;padding:4px 12px;font-size:14px;
+}
+.btn-back:hover{background:rgba(255,255,255,.12);}
+.header-titles{flex:1;min-width:200px;}
+.site-title{font-size:22px;letter-spacing:2px;font-weight:700;}
+.site-sub{font-size:13px;opacity:.8;margin-top:2px;}
+.header-search{flex:1.4;min-width:220px;}
+.header-search input{
+  width:100%;padding:8px 12px;border-radius:20px;border:none;
+  background:#fbf7ee;color:var(--ink);
+}
+.tab-bar{
+  max-width:1080px;margin:0 auto;
+  display:flex;gap:4px;padding:0 12px;
+  overflow-x:auto;
+}
+.tab{
+  background:transparent;border:none;color:rgba(244,239,226,.85);
+  padding:10px 18px;font-size:15px;border-bottom:3px solid transparent;
+  white-space:nowrap;
+}
+.tab:hover{color:#fff;}
+.tab.active{color:#fff;border-bottom-color:#d9b96a;font-weight:700;}
+
+/* ============ 布局 ============ */
+#app{max-width:1080px;margin:0 auto;padding:24px 20px 60px;}
+.view{display:none;}
+.view.active{display:block;animation:fade .25s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.hidden{display:none !important;}
+
+/* ============ 首页 ============ */
+.hero{text-align:center;padding:20px 10px 30px;}
+.hero-cross{font-size:40px;color:var(--primary);}
+.hero h2{color:var(--primary);font-size:26px;margin:8px 0 10px;letter-spacing:3px;}
+.hero-desc{color:var(--muted);max-width:640px;margin:0 auto;font-size:15px;}
+.module-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:10px 0 30px;
+}
+.module-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;text-align:left;box-shadow:var(--shadow);
+  border-top:4px solid var(--primary);transition:transform .15s, box-shadow .15s;
+}
+.module-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(60,45,20,.14);}
+.module-card h3{color:var(--primary);font-size:20px;margin-bottom:6px;}
+.module-card p{color:var(--muted);font-size:14px;}
+.module-card .count{
+  display:inline-block;margin-top:12px;background:var(--primary-soft);
+  color:var(--primary);border-radius:14px;padding:2px 12px;font-size:13px;
+}
+.home-search-tip{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+}
+.home-search-tip label{color:var(--primary);font-weight:700;}
+.home-search-tip input{
+  flex:1;min-width:220px;padding:9px 14px;border:1px solid var(--line);
+  border-radius:8px;background:#fff;
+}
+.site-footer{margin-top:36px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px;}
+
+/* ============ 浏览视图 ============ */
+.browse-head{margin-bottom:14px;}
+.browse-head h2{color:var(--primary);font-size:24px;letter-spacing:2px;}
+.browse-head p{color:var(--muted);font-size:14px;margin-top:4px;}
+.cat-nav{
+  display:flex;gap:8px;overflow-x:auto;padding:8px 0 14px;
+  border-bottom:1px solid var(--line);margin-bottom:18px;
+}
+.cat-chip{
+  background:var(--paper);border:1px solid var(--line);color:var(--ink);
+  border-radius:18px;padding:6px 14px;font-size:14px;white-space:nowrap;
+}
+.cat-chip.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.cat-group{margin-bottom:26px;}
+.cat-group h3{
+  color:var(--accent);font-size:18px;margin-bottom:10px;
+  border-left:4px solid var(--accent);padding-left:10px;
+}
+.cat-group h3 small{color:var(--muted);font-size:13px;font-weight:normal;margin-left:8px;}
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);
+}
+.card-head{
+  width:100%;background:none;border:none;text-align:left;
+  padding:14px 18px;font-size:16px;color:var(--ink);
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+}
+.card-head:hover{background:#f3eddf;}
+.card-head .arrow{color:var(--muted);transition:transform .2s;}
+.card.open .card-head .arrow{transform:rotate(90deg);}
+.card-body{display:none;padding:0 18px 16px;border-top:1px dashed var(--line);}
+.card.open .card-body{display:block;}
+.card-body p{margin:10px 0;}
+.card-body .label{color:var(--accent);font-weight:700;}
+.card-body .source{
+  margin-top:12px;font-size:13px;color:var(--muted);
+  border-top:1px dotted var(--line);padding-top:8px;
+}
+.card-body .kw{font-size:12px;color:var(--muted);}
+
+/* ============ 搜索结果 ============ */
+.search-group{margin-bottom:22px;}
+.search-group h3{color:var(--primary);font-size:17px;margin-bottom:8px;}
+.search-empty{
+  text-align:center;padding:50px 20px;color:var(--muted);
+}
+
+/* ============ 自测 ============ */
+.quiz-stage{margin-top:10px;}
+.quiz-stage h2{color:var(--primary);font-size:24px;margin-bottom:18px;letter-spacing:2px;}
+.quiz-mode-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.mode-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;text-align:left;box-shadow:var(--shadow);border-top:4px solid var(--accent);
+}
+.mode-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(60,45,20,.14);}
+.mode-icon{font-size:28px;color:var(--primary);}
+.mode-card h3{margin:8px 0;color:var(--primary);}
+.mode-card p{font-size:13px;color:var(--muted);}
+.setup-row{margin:14px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.setup-row label{color:var(--primary);font-weight:700;min-width:80px;}
+.setup-row select{
+  padding:8px 10px;border:1px solid var(--line);border-radius:6px;
+  background:#fff;min-width:200px;
+}
+.setup-actions{margin-top:22px;display:flex;gap:12px;}
+.btn{
+  background:var(--paper);border:1px solid var(--line);color:var(--ink);
+  padding:9px 18px;border-radius:8px;font-size:15px;
+}
+.btn:hover{background:#f3eddf;}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary);}
+.btn.primary:hover{background:#18304f;}
+.btn.danger{background:#fff;border-color:var(--bad);color:var(--bad);}
+.btn.danger:hover{background:#fbeaea;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.quiz-progress{
+  display:flex;justify-content:space-between;color:var(--muted);
+  font-size:14px;margin-bottom:12px;
+}
+.q-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;box-shadow:var(--shadow);
+}
+.q-meta{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.q-type{display:inline-block;background:var(--primary-soft);color:var(--primary);border-radius:10px;padding:1px 10px;margin-right:6px;}
+.q-stem{font-size:17px;margin-bottom:16px;}
+.q-options{display:flex;flex-direction:column;gap:8px;}
+.q-opt{
+  text-align:left;padding:10px 14px;border:1px solid var(--line);
+  border-radius:8px;background:#fff;font-size:15px;
+}
+.q-opt:hover{border-color:var(--primary);}
+.q-opt.selected{border-color:var(--primary);background:var(--primary-soft);}
+.q-opt.correct{border-color:var(--good);background:#e8f2ea;}
+.q-opt.wrong{border-color:var(--bad);background:#fbeaea;}
+.q-fill input{
+  width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:15px;
+}
+.q-feedback{
+  margin-top:16px;padding:12px 14px;border-radius:8px;font-size:14px;display:none;
+}
+.q-feedback.show{display:block;}
+.q-feedback.ok{background:#e8f2ea;color:var(--good);border:1px solid #bcd8c2;}
+.q-feedback.no{background:#fbeaea;color:var(--bad);border:1px solid #e5bcbc;}
+.q-feedback .exp{display:block;margin-top:6px;color:var(--ink);}
+.q-source{margin-top:10px;font-size:12px;color:var(--muted);}
+.quiz-nav{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+.hint{font-size:13px;color:var(--muted);margin-bottom:14px;}
+
+/* 结果 */
+.result-score{
+  text-align:center;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);padding:26px;margin-bottom:18px;
+}
+.result-score .big{font-size:46px;color:var(--primary);font-weight:700;}
+.result-score .sub{color:var(--muted);}
+.review-item{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:10px;
+}
+.review-item .ri-head{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);}
+.badge{border-radius:10px;padding:1px 10px;font-size:12px;}
+.badge.right{background:#e8f2ea;color:var(--good);}
+.badge.wrong{background:#fbeaea;color:var(--bad);}
+.badge.manual{background:#fff3d6;color:#8a6d1a;}
+
+/* 历史 */
+.hist-table{width:100%;border-collapse:collapse;background:var(--paper);border-radius:var(--radius);overflow:hidden;}
+.hist-table th,.hist-table td{border:1px solid var(--line);padding:10px;text-align:center;font-size:14px;}
+.hist-table th{background:var(--primary-soft);color:var(--primary);}
+
+/* ============ 响应式 ============ */
+@media (max-width:768px){
+  body{font-size:15px;}
+  .header-inner{padding:10px 12px;}
+  .site-title{font-size:18px;}
+  .header-search{min-width:100%;order:3;}
+  .header-search input{font-size:16px;}        /* ≥16px 避免 iOS 点击输入时自动缩放页面 */
+  #app{padding:16px 12px 50px;}
+  .module-grid{grid-template-columns:1fr;}
+  .quiz-mode-cards{grid-template-columns:1fr;}
+  .tab{padding:10px 14px;font-size:14px;}
+  .hero h2{font-size:21px;}
+  /* 历史成绩表：窄屏下横向滚动而非撑破页面 */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);}
+  .hist-table{min-width:520px;}
+  .setup-row select,.q-fill input{font-size:16px;}
+}
+
+/* 手机窄屏（≤480px）：导航五键平分一屏、触控目标加大、收紧内边距防溢出 */
+@media (max-width:480px){
+  .header-inner{gap:10px;}
+  .site-sub{font-size:12px;letter-spacing:0;}
+  .btn-back{font-size:13px;padding:4px 8px;}
+  .tab-bar{padding:0 4px;}
+  .tab{flex:1;padding:11px 2px;font-size:13px;text-align:center;white-space:nowrap;}
+  .hero{padding:14px 6px 22px;}
+  .hero-cross{font-size:34px;}
+  .hero h2{font-size:19px;}
+  .hero-desc{font-size:14px;}
+  .module-card{padding:16px 14px;}
+  .module-card h3{font-size:18px;}
+  .card-head{padding:12px 12px;font-size:15px;}
+  .card-body{padding:0 12px 14px;}
+  .q-card{padding:14px;}
+  .q-stem{font-size:16px;}
+  .q-opt{padding:11px 12px;font-size:14px;}
+  .btn{padding:11px 16px;font-size:14px;}
+  .setup-row select{width:100%;min-width:0;}
+  .home-search-tip input{width:100%;min-width:0;}
+  .result-score .big{font-size:38px;}
+  .quiz-nav{gap:8px;}
+  .review-item{padding:12px;}
+}
+
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <button class="btn-back" id="btnHome" title="返回首页">‹ 首页</button>
+    <div class="header-titles">
+      <h1 class="site-title">天主教学习系统</h1>
+      <p class="site-sub">慕道班学习 · 圣经故事 · 祈祷礼仪 · 自测</p>
+    </div>
+    <div class="header-search">
+      <input type="search" id="globalSearch" placeholder="全站搜索：输入关键词，如「圣事」「天主经」…" autocomplete="off">
+    </div>
+  </div>
+  <nav class="tab-bar" id="tabBar">
+    <button data-view="home" class="tab active">首页</button>
+    <button data-view="catechism" class="tab">教理问答</button>
+    <button data-view="bible_stories" class="tab">圣经故事</button>
+    <button data-view="liturgy_prayers" class="tab">礼仪祈祷</button>
+    <button data-view="quiz" class="tab">自测题库</button>
+  </nav>
+</header>
+
+<main id="app">
+
+  <!-- 首页 -->
+  <section id="view-home" class="view active">
+    <div class="hero">
+      <div class="hero-cross">✝</div>
+      <h2>愿主平安与你同在</h2>
+      <p class="hero-desc">本系统依据《天主教教理》《思高圣经》及教会通行译本整理，供慕道班学员与教友日常学习、复习与自测使用。</p>
+    </div>
+    <div class="module-grid" id="moduleGrid"></div>
+    <div class="home-search-tip">
+      <label for="homeSearch">全站关键字搜索：</label>
+      <input type="search" id="homeSearch" placeholder="输入关键词，如「圣事」「三位一体」「复活」…">
+    </div>
+    <footer class="site-footer">
+      <p>内容依据《天主教教理》《思高圣经》等，详见各条出处。本站仅供学习之用。</p>
+    </footer>
+  </section>
+
+  <!-- 教理问答 / 圣经故事 / 礼仪祈祷 共用浏览视图 -->
+  <section id="view-browse" class="view">
+    <div class="browse-head">
+      <h2 id="browseTitle"></h2>
+      <p id="browseDesc"></p>
+    </div>
+    <div class="cat-nav" id="catNav"></div>
+    <div id="browseContent"></div>
+  </section>
+
+  <!-- 搜索结果 -->
+  <section id="view-search" class="view">
+    <div class="browse-head">
+      <h2>搜索结果</h2>
+      <p id="searchMeta"></p>
+    </div>
+    <div id="searchContent"></div>
+  </section>
+
+  <!-- 自测题库 -->
+  <section id="view-quiz" class="view">
+    <div class="quiz-stage" id="quizHome">
+      <h2>自测题库</h2>
+      <div class="quiz-mode-cards">
+        <button class="mode-card" id="modePractice">
+          <span class="mode-icon">✎</span>
+          <h3>练习模式</h3>
+          <p>选择题型与类别，逐题作答，立即判分并显示解析。</p>
+        </button>
+        <button class="mode-card" id="modeMock">
+          <span class="mode-icon">☑</span>
+          <h3>整卷模拟</h3>
+          <p>随机抽题组卷，交卷后统一判分，可回顾每题对错与解析。</p>
+        </button>
+        <button class="mode-card" id="modeHistory">
+          <span class="mode-icon">☰</span>
+          <h3>成绩记录</h3>
+          <p>历次模拟成绩自动保存在本机，可查看与清除。</p>
+        </button>
+      </div>
+    </div>
+
+    <!-- 练习设置 -->
+    <div class="quiz-stage hidden" id="practiceSetup">
+      <h2>练习模式 · 设置</h2>
+      <div class="setup-row"><label>题型：</label>
+        <select id="practiceType">
+          <option value="all">全部题型</option>
+          <option value="choice">单选</option>
+          <option value="truefalse">判断</option>
+          <option value="fill">填空</option>
+          <option value="essay">简答</option>
+        </select>
+      </div>
+      <div class="setup-row"><label>类别：</label>
+        <select id="practiceCat"><option value="all">全部类别</option></select>
+      </div>
+      <div class="setup-actions">
+        <button class="btn primary" id="btnStartPractice">开始练习</button>
+        <button class="btn" id="practiceBack">返回</button>
+      </div>
+    </div>
+
+    <!-- 练习答题 -->
+    <div class="quiz-stage hidden" id="practiceRun">
+      <div class="quiz-progress"><span id="practicePos"></span><span id="practiceTotal"></span></div>
+      <div id="practiceBox"></div>
+      <div class="quiz-nav">
+        <button class="btn" id="practicePrev">上一题</button>
+        <button class="btn primary" id="practiceNext">下一题</button>
+        <button class="btn" id="practiceQuit">结束练习</button>
+      </div>
+    </div>
+
+    <!-- 模拟设置 -->
+    <div class="quiz-stage hidden" id="mockSetup">
+      <h2>整卷模拟 · 设置</h2>
+      <div class="setup-row"><label>题目数量：</label>
+        <select id="mockCount">
+          <option value="10">10 题</option>
+          <option value="20" selected>20 题</option>
+          <option value="30">30 题</option>
+        </select>
+      </div>
+      <div class="setup-actions">
+        <button class="btn primary" id="btnStartMock">开始模拟</button>
+        <button class="btn" id="mockBack">返回</button>
+      </div>
+    </div>
+
+    <!-- 模拟答题 -->
+    <div class="quiz-stage hidden" id="mockRun">
+      <div class="quiz-progress"><span id="mockPos"></span><span id="mockTotal"></span></div>
+      <div id="mockBox"></div>
+      <div class="quiz-nav">
+        <button class="btn" id="mockPrev">上一题</button>
+        <button class="btn primary" id="mockNext">下一题</button>
+        <button class="btn danger" id="mockSubmit">交卷</button>
+      </div>
+    </div>
+
+    <!-- 模拟结果 -->
+    <div class="quiz-stage hidden" id="mockResult">
+      <h2>模拟成绩</h2>
+      <div id="resultBox"></div>
+      <div class="quiz-nav">
+        <button class="btn primary" id="mockReviewBtn">回顾答题</button>
+        <button class="btn" id="mockResultBack">返回题库</button>
+      </div>
+    </div>
+
+    <!-- 成绩历史 -->
+    <div class="quiz-stage hidden" id="historyView">
+      <h2>成绩记录</h2>
+      <p class="hint">说明：简答题请对照参考答案自查，成绩按客观题（单选/判断/填空）计分。</p>
+      <div id="historyList"></div>
+      <div class="quiz-nav">
+        <button class="btn danger" id="btnClearHistory">清除全部记录</button>
+        <button class="btn" id="historyBack">返回</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+var CATHOLIC_DATA = {"catechism":[{"id":"cat-001","module":"catechism","category":"信仰总论","title":"启示与信仰","content":"【问题】什么是天主的启示？人如何以信仰回应？\n【答案】启示是天主藉着言语和行动，尤其藉着祂的圣子耶稣基督，把自己和救人的计划启示给人。信仰是人自由地顺从天主的恩典，以理智和意志信服天主所启示的真理，全心归向祂。信仰既是天主的恩典，也是人的自由回应。","source":"《天主教教理》26-49条、142-165条","keywords":["启示","信仰","恩典","回应"]},{"id":"cat-002","module":"catechism","category":"信仰总论","title":"圣经与圣传","content":"【问题】天主的话保存在哪里？圣经与圣传是什么关系？\n【答案】天主的话保存在圣经和圣传中。圣经是天主默示而写成的书信卷；圣传是宗徒们从基督和圣神领受、由教会代代传下来的生命。二者同源、相辅相成，都指向信仰的宝库（deposits of faith），教会在圣神带领下予以守护和阐释。","source":"《天主教教理》74-100条；《天主的启示教义宪章》","keywords":["圣经","圣传","信仰宝库","默示"]},{"id":"cat-003","module":"catechism","category":"信仰总论","title":"教会训导权","content":"【问题】谁有权解释圣经和信仰？\n【答案】基督把解释信仰的职责交给了教会，即由教宗和世界主教团在圣神助佑下组成的训导权（Magisterium）。它不是凌驾于天主的话之上，而是为忠实保管、阐释圣经与圣传，使信徒在信仰上不致迷失。","source":"《天主教教理》84-95条、2032-2040条","keywords":["训导权","教宗","主教团","解释圣经"]},{"id":"cat-004","module":"catechism","category":"信仰总论","title":"信经","content":"【问题】什么是信经？它有什么作用？\n【答案】信经是教会对信仰要义的简明宣告，如《宗徒信经》和《尼西亚——君士坦丁堡信经》。它概括了三位一体、基督救赎、教会、永生等核心真理，是慕道者入教前应宣认、教友日常祈祷所诵念的信仰纲领。","source":"《天主教教理》185-197条","keywords":["信经","宗徒信经","尼西亚信经","宣认"]},{"id":"cat-005","module":"catechism","category":"信仰总论","title":"信德的意义与必要性","content":"【问题】为什么人需要信德？\n【答案】人凭理性可以认识有一位天主，但要达到与天主深邃的结合、认识祂救赎的奥迹，必须靠信德。信德是人走向永生的开端，没有信德就不可能取悦天主；它使我们成为天主的子女，并在爱德中做工。","source":"《天主教教理》26-43条、155-160条","keywords":["信德","永生","天主子女","爱德"]},{"id":"cat-006","module":"catechism","category":"信仰总论","title":"唯一天主与宗教真理","content":"【问题】天主教相信有几位天主？\n【答案】天主教只敬拜一位真天主。耶稣确认经师的回答：「以色列！你要聆听：上主我们的天主是唯一的天主。」（谷12:29）这唯一的天主在耶稣基督和圣神内启示为圣三——一个天主性，三个位格。","source":"《天主教教理》201-231条；谷12:29","keywords":["唯一天主","一神论","天主是主"]},{"id":"cat-007","module":"catechism","category":"天主与三位一体","title":"天主是谁——自有者","content":"【问题】天主是谁？\n【答案】天主是永恒无限的神灵，是「自有者」。祂在燃烧的荆棘中对梅瑟启示自己的名字说：「我是自有者」（出3:14）。祂无始无终、不依赖任何其他存在而存在，是万物的创造者与终向。","source":"《天主教教理》205-231条；出谷纪3:14","keywords":["天主","自有者","出埃及","神灵"]},{"id":"cat-008","module":"catechism","category":"天主与三位一体","title":"天主是爱","content":"【问题】怎样理解「天主是爱」？\n【答案】若望宗徒说：「天主是爱」（若一4:8、16）。这爱不是天主的一种属性，而是祂的本体。祂在创世、在赐下独子、在赏赐圣神中，白白地把这爱通传给人，召叫人成为祂的子女。","source":"《天主教教理》220-221条；若望一书4:8","keywords":["天主是爱","若望一书","白白恩典"]},{"id":"cat-009","module":"catechism","category":"天主与三位一体","title":"天主三位一体","content":"【问题】什么是天主三位一体？\n【答案】天主只有一个天主性，却有三个位格：圣父、圣子、圣神。三位有区别而不分裂，互相内寓、同性同体、同属一个实体。我们不是相信三个神，而是唯一的天主在三个位格中。这是信仰和基督徒生活的核心奥迹，人因父、子、圣神之名受洗。","source":"《天主教教理》232-267条；《天主教教理简编》44","keywords":["三位一体","圣三","同性同体","核心奥迹"]},{"id":"cat-010","module":"catechism","category":"天主与三位一体","title":"天主的属性","content":"【问题】天主有哪些主要属性？\n【答案】天主是永恒的、无限美善的、全能的、全知的、无所不在的、公义而仁慈的、毫无改变的。这些属性并非彼此分割，而是唯一天主完满生活的反映，人只能藉启示和受造物隐约认识。","source":"《天主教教理》206-213条","keywords":["天主属性","全能","全知","永恒"]},{"id":"cat-011","module":"catechism","category":"天主与三位一体","title":"天主创造天地","content":"【问题】世界从何而来？\n【答案】世界和万物都是天主从无中创造出来的（creatio ex nihilo）。天主不是因为需要而创造，而是以全能和爱自由地使万物存在，并看一切所造的「说好」。受造物本善，人更是按天主的肖像受造。","source":"《天主教教理》279-324条，尤其296-301条","keywords":["创造","从无中","天主肖像","受造物"]},{"id":"cat-012","module":"catechism","category":"天主与三位一体","title":"天主的照顾","content":"【问题】天主造世后是否不管世界？\n【答案】不是。天主不但创造，还以照顾（providentia）维系和带领万物，甚至连一只麻雀坠落、人的头发被数，都在天父照顾之内。祂给人自由，又在暗中带领人的一切，使万事互相效力，叫爱祂的人得益处。","source":"《天主教教理》302-314条；玛6:25-34","keywords":["照顾","上智","自由","天父"]},{"id":"cat-013","module":"catechism","category":"天主与三位一体","title":"人按天主肖像受造","content":"【问题】人在受造物中有什么特殊地位？\n【答案】圣经说：「让我们照我们的肖像，按我们的模样造人。」（创1:26）人拥有理智、自由和良知，能够认识、爱慕和回应天主，并被召叫分享天主的生命。人的尊严由此而来。","source":"《天主教教理》355-384条；创1:26-27","keywords":["天主肖像","人的尊严","理智自由","创世纪"]},{"id":"cat-014","module":"catechism","category":"耶稣基督","title":"耶稣是天主子取了人身","content":"【问题】耶稣基督是谁？\n【答案】耶稣基督是永生天主的独生子，三位一体的第二位。祂由圣神受孕，藉童贞玛利亚取了人性，成为真正的人，叫「厄玛奴耳」（天主与我们同在）。祂来是为寻找、拯救失丧的人。","source":"《天主教教理》422-455条","keywords":["耶稣","天主子","降生","厄玛奴耳"]},{"id":"cat-015","module":"catechism","category":"耶稣基督","title":"基督两性一位","content":"【问题】耶稣是神还是人？\n【答案】耶稣基督是一个位格，却具有完整的天主性和完整的人性：两性在唯一的圣子位格内结合，既不混淆，也不分割。祂是真天主，也是真人。这是加采东大公会议（451年）定断的信仰。","source":"《天主教教理》467-483条，尤其480条","keywords":["两性一位","加采东","真天主真人","位格"]},{"id":"cat-016","module":"catechism","category":"耶稣基督","title":"基督的救赎工程","content":"【问题】耶稣为什么要死在十字架上？\n【答案】人类因罪失落了与天主的共融。基督无偿地服从天父，在十字架上以自己的血作了救赎的牺牲，补赎了全人类的罪，摧毁了死亡和魔鬼的权势，使人与天主重新和好。这就是救赎与赎罪。","source":"《天主教教理》571-623条，尤其606-618条","keywords":["救赎","十字架","赎罪","和好"]},{"id":"cat-017","module":"catechism","category":"耶稣基督","title":"基督的复活","content":"【问题】耶稣复活意味着什么？\n【答案】耶稣在死后第三日，藉天父的光荣从死者中复活，获得一个光荣、不朽的身体。复活是整个信仰的基石：证明祂是天主子，战胜了罪恶与死亡，也保证信徒将来同样复活。祂今天仍然活着。","source":"《天主教教理》638-658条","keywords":["复活","第三日","信仰基石","不朽"]},{"id":"cat-018","module":"catechism","category":"耶稣基督","title":"基督升天","content":"【问题】耶稣升天有什么意义？\n【答案】复活后第四十日，基督在门徒面前被提升天，坐于天父右边。祂人性地进入天主的光荣，成为我们在天父前的先锋和代言者，并应许要再度光荣地来临。升天不是离别，而是祂藉圣神临在于教会的开始。","source":"《天主教教理》659-667条","keywords":["升天","坐于天父右边","先锋","再度来临"]},{"id":"cat-019","module":"catechism","category":"耶稣基督","title":"基督的公开生活与奇迹","content":"【问题】基督公开传教做了什么？\n【答案】耶稣约三十岁开始传教，宣讲天国临近，召叫人悔改，以奇迹、驱魔和比喻证明天国已来临。祂特别关怀罪人、穷人、病者和被弃的人，并拣选十二宗徒，做祂救国工程的见证人。","source":"《天主教教理》512-570条","keywords":["公开生活","天国","奇迹","十二宗徒"]},{"id":"cat-020","module":"catechism","category":"耶稣基督","title":"基督再度来临","content":"【问题】基督还会再来吗？\n【答案】信经明确宣认：基督要在光荣中再度来临，审判生死者。那时一切完成，天主将成为万物之中的万有。这日子的时刻无人知道，信徒应怀着警醒和望德等待。","source":"《天主教教理》668-679条、1040-1050条","keywords":["再来","审判","警醒","望德"]},{"id":"cat-021","module":"catechism","category":"圣神","title":"圣神是第三位","content":"【问题】圣神是谁？\n【答案】圣神是三位一体的第三位，与父子同性同体、同受钦崇与光荣。祂不是一种能力或影响力，而是一位「主」、是赐生命者，由父和子所发，在创世、先知、尤其在基督救赎和教会中工作。","source":"《天主教教理》687-747条","keywords":["圣神","第三位","赐生命者","三位一体"]},{"id":"cat-022","module":"catechism","category":"圣神","title":"圣神降临——五旬节","content":"【问题】圣神何时正式赐给教会？\n【答案】基督升天后第十日，即五旬节，圣神以如火的舌形降临在圣母和宗徒们身上，赐予他们勇气与奇恩。宗徒们开始大胆宣讲福音，教会由此诞生。五旬节被视为教会的生日。","source":"《天主教教理》731-741条；宗徒大事录2章","keywords":["五旬节","圣神降临","教会诞生","宗徒大事录"]},{"id":"cat-023","module":"catechism","category":"圣神","title":"圣神的七恩","content":"【问题】圣神赐给信徒什么恩？\n【答案】圣神赐下七件恩赐：上智、明达、超见、刚毅、聪敏、孝爱、敬畏（上主）。这些恩宠使信徒善于承行天主的旨意，并使信德、望德、爱德在他们心中成长，尤其在坚振圣事当中完满赐下。","source":"《天主教教理》1830-1831条；依11:2-3","keywords":["七恩","上智明达","坚振","依撒意亚"]},{"id":"cat-024","module":"catechism","category":"圣神","title":"圣神的果实","content":"【问题】随从圣神的引导会结出什么果实？\n【答案】保禄列举圣神的果实：爱、喜乐、平安、忍耐、良善、温和、忠信、谦逊、自制（迦5:22-23）。这些是圣神在信友内工作的标记，与肉身私欲的行为相对立。","source":"《天主教教理》1832条；迦拉达书5:22-23","keywords":["圣神果实","爱喜乐平安","迦拉达书","私欲"]},{"id":"cat-025","module":"catechism","category":"圣神","title":"圣神与圣化","content":"【问题】圣神在信徒身上做什么？\n【答案】圣神是圣化者：祂在圣洗和坚振中祝圣我们为天主子女，在圣事中赋与恩宠，引导我们进入一切真理，并以说不出来的叹息为我们转求。信徒的整个灵修生活，就是随从圣神、赖圣神而行。","source":"《天主教教理》742-747条、1999-2000条","keywords":["圣化","天主子女","引导","转求"]},{"id":"cat-026","module":"catechism","category":"教会","title":"教会是基督的奥体","content":"【问题】教会是什么？\n【答案】教会是基督以血赢得的子民，是基督的奥体：基督是头，信徒是肢体，彼此相连；也是真理和生命的圣事，是人类与天主共融的可见标记。它不是一个普通社团，而是三位一体通传于人的团体。","source":"《天主教教理》748-770条、789-791条","keywords":["教会","奥体","基督为头","圣事"]},{"id":"cat-027","module":"catechism","category":"教会","title":"教会是奥民——天主的子民","content":"【问题】「天主的子民」是什么意思？\n【答案】旧选了以色列，新约中基督召叫出一个新的子民，不分种族、阶级，凡信耶稣的都成为天主的子民、君尊的司祭、圣洁的国度。这子民的使命是为世界服务，把福音带给万民。","source":"《天主教教理》781-786条","keywords":["天主子民","司祭","使命","福音"]},{"id":"cat-028","module":"catechism","category":"教会","title":"教会的四个特征","content":"【问题】真正的基督教会有哪四个标记？\n【答案】信经宣认教会是「唯一、至圣、至公、从宗徒传下来的」（una, sancta, catholica, apostolica）。这四个特征不可分地相连，是基督赐给教会的本质标记，在圣神助佑下直到末日。","source":"《天主教教理》811条、866-870条","keywords":["四特征","唯一至圣至公宗徒","信经","标记"]},{"id":"cat-029","module":"catechism","category":"教会","title":"教宗与伯多禄职","content":"【问题】教宗在教会中是什么角色？\n【答案】基督对伯多禄说：「你是伯多禄（磐石），在这磐石上我要建立我的教会……我要将天国的钥匙交给你。」（玛16:18-19）教宗是伯多禄的继承人，是全教会可见的首领和合一的枢纽，在定断信仰与道德的当信道理时，享有不能错误的特恩。","source":"《天主教教理》880-892条；玛16:18-19","keywords":["教宗","伯多禄","磐石","不能错误"]},{"id":"cat-030","module":"catechism","category":"教会","title":"主教、神父与圣秩","content":"【问题】主教和神父做什么？\n【答案】主教是宗徒的继承人，与教宗共融，在自己的教区中代表基督，训导、圣化、牧养子民。神父（司铎）由主教赋与神权，协助主教宣讲福音、举行圣事、主持圣体。他们因圣秩圣事而肖似基督大司祭。","source":"《天主教教理》874-879条、1536-1600条","keywords":["主教","神父","宗徒继承人","大司祭"]},{"id":"cat-031","module":"catechism","category":"教会","title":"平信徒的使命","content":"【问题】普通教友在教会和世界中有什么使命？\n【答案】平信徒在世俗中生活，因圣洗而分享基督的司祭、先知、君王职。他们的特有使命是在家庭、职业、社会中熔恩生活，使福音临于世界，并与司牧合作建设教会，叫基督的国广传。","source":"《天主教教理》897-913条","keywords":["平信徒","信友","世俗使命","教友"]},{"id":"cat-032","module":"catechism","category":"教会","title":"诸圣相通功","content":"【问题】「诸圣相通功」是什么意思？\n【答案】教会是一个奥体，无论是在天、在炼净中，还是在世上旅行的信徒，都在基督内相连，共享同一的生命、祈祷和恩宠。世上的人可以请天上的圣人转祷，也可为炼灵献弥撒、祈祷，彼此扶助。","source":"《天主教教理》946-962条","keywords":["诸圣相通功","教会团契","炼灵","转祷"]},{"id":"cat-033","module":"catechism","category":"圣事","title":"七件圣事总论","content":"【问题】教会有几件圣事？是哪几件？\n【答案】新约圣事由基督建立，共有七件：圣洗、坚振、感恩（圣体）、忏悔（和好/告解）、病人傅油、圣秩、婚姻。它们涉及基督徒生命的各个重要阶段，产生、滋长、治愈并派遣信徒。前三件为入门圣事。","source":"《天主教教理》1113条、1210-1211条","keywords":["七件圣事","入门圣事","基督建立","总论"]},{"id":"cat-034","module":"catechism","category":"圣事","title":"圣洗圣事","content":"【问题】圣洗有什么作用？\n【答案】圣洗是入教的门户，是重生的圣事。藉水洗和祈祷，人原罪和个人罪过被赦免，成为天主子女、教会一员、共享基督的司祭职，并植入超性生命。除不能领洗者外，人不能藉别的方法得救。","source":"《天主教教理》1213-1284条","keywords":["圣洗","入门","罪过赦免","重生"]},{"id":"cat-035","module":"catechism","category":"圣事","title":"坚振圣事","content":"【问题】坚振圣事做什么？\n【答案】坚振使圣洗的恩宠坚固圆满，藉覆手、划十字傅油和主教祈祷，特别赐下圣神，如五旬节所赐。领受人成为基督成熟的见证人，获得圣神七恩，勇于为信仰作证。","source":"《天主教教理》1285-1321条","keywords":["坚振","圣神","七恩","见证"]},{"id":"cat-036","module":"catechism","category":"圣事","title":"圣体圣事与弥撒","content":"【问题】圣体圣事是什么？弥撒为什么重要？\n【答案】圣体圣事是七件圣事的核心与顶峰：祝圣后的饼酒，其本体已变为基督的身体、血、灵魂和天主性（变质说），形状仍为饼酒。弥撒（感恩祭）是十字架祭献的重演与临在，不是重祭，而是基督一次而永远的祭献藉礼仪临到我们。领圣体使人与基督结合、滋养灵魂、建设教会。","source":"《天主教教理》1322-1419条，尤其1324、1373-1377条","keywords":["圣体","弥撒","感恩祭","变质说","本体改变"]},{"id":"cat-037","module":"catechism","category":"圣事","title":"忏悔（和好/告解）圣事","content":"【问题】告解圣事怎样赦免死后犯下的重罪？\n【答案】圣洗之后所犯的罪，由和好圣事（忏悔/告解）赦免。教友坦白告明自己的重罪，痛悔并定改，听告司铎代表基督宣判赦免（宽赦），并指定补赎（善功）。此圣事赐回超性生命，与天主及教会和好。","source":"《天主教教理》1420-1498条，尤其1440-1484条","keywords":["告解","和好","忏悔","宽赦","痛悔"]},{"id":"cat-038","module":"catechism","category":"圣事","title":"病人傅油圣事","content":"【问题】病人傅油给谁、做什么？\n【答案】为病重或年老的信友，由司铎以圣油傅抹额和双手，并祈祷。此圣事赐与患病者特别的恩宠，安慰心灵、减轻痛苦，若有益于灵魂，还赦免罪过，并预备人走向最后的归乡。","source":"《天主教教理》1499-1532条；雅5:14-15","keywords":["病人傅油","终傅","圣油","安慰"]},{"id":"cat-039","module":"catechism","category":"圣事","title":"圣秩圣事","content":"【问题】圣秩圣事赋什么？\n【答案】圣秩由主教施行，祝圣男子为主教、司铎（神父）或执事，印上不可磨灭的神印，赋与他们献祭、赦罪、牧养子民的神权，肖似基督大司祭。此圣事是为服务整个教会而设立。","source":"《天主教教理》1536-1600条","keywords":["圣秩","神印","司铎","执事"]},{"id":"cat-040","module":"catechism","category":"圣事","title":"婚姻圣事","content":"【问题】婚姻在天主教内是什么？\n【答案】婚姻是男女二人自由许诺、彼此终身忠实，在基督内结为一体的盟约。基督把它提升为圣事，赋与恩宠，使夫妻彼此相爱、同舟共济，并合作生育、教养子女。有效婚姻非经教会不能解除。","source":"《天主教教理》1601-1666条","keywords":["婚姻","盟约","不可解除","家庭"]},{"id":"cat-041","module":"catechism","category":"十诫与道德","title":"天主十诫总论","content":"【问题】十诫是什么？\n【答案】十诫（Decalogus）是天主藉梅瑟在西奈山颁布给以色列的十条诫命，是人对天主和对近人的基本义务。其本质不变、约束力时时处处有效；耶稣并未废除，反而成全了它。","source":"《天主教教理》2052-2082条，尤其2072条","keywords":["十诫","梅瑟","西奈山","基本义务"]},{"id":"cat-042","module":"catechism","category":"十诫与道德","title":"两大诫命","content":"【问题】十诫的总纲是什么？\n【答案】耶稣把全部法律和先知概括为两条：「你要全心、全灵、全意爱上主你的天主」，以及「你要爱你的近人如你自己」（玛22:37-40）。前四诫指向爱天主，后六诫指向爱近人。","source":"《天主教教理》2083条、2196条；玛22:37-40","keywords":["两大诫命","爱天主","爱人","总纲"]},{"id":"cat-043","module":"catechism","category":"十诫与道德","title":"十诫内容（爱天主的四诫）","content":"【问题】前十条诫命中与爱天主相关的是哪几条？\n【答案】第一诫：除天主外不敬拜别的神；第二诫：不可妄呼天主的名；第三诫：要守主日（安息日）为圣日；第四诫：应孝敬父母。这四诫规范人对天主和对生命根源的态度。","source":"《天主教教理》2084-2262条","keywords":["第一至四诫","主日","妄呼圣名","孝敬父母"]},{"id":"cat-044","module":"catechism","category":"十诫与道德","title":"十诫内容（爱人的六诫）","content":"【问题】后六诫具体是什么？\n【答案】第五诫：不可杀人；第六诫：不可奸淫；第七诫：不可偷盗；第八诫：不可作假见证；第九诫：不可贪恋人的妻子；第十诫：不可贪恋人的财物。它们保护人的生命、家庭、财产、真理和内心的纯洁。","source":"《天主教教理》2259-2557条","keywords":["第五至十诫","不可杀人偷盗","假见证","贪婪"]},{"id":"cat-045","module":"catechism","category":"十诫与道德","title":"真福八端","content":"【问题】真福八端讲什么？\n【答案】耶稣在山中圣训宣布真福的人：神贫的人、哀恸的人、温良的人、饥渴慕义的人、怜悯人的人、心里洁浄的人、缔造和平的人、为义而受迫害的人（玛5:3-10）。它揭示天国的价值，与世俗的成功标准相反，指向永生的真福。","source":"《天主教教理》1716-1724条；玛5:3-10","keywords":["真福八端","山中圣训","神贫","天国价值"]},{"id":"cat-046","module":"catechism","category":"十诫与道德","title":"原罪与本罪","content":"【问题】什么是原罪？什么是本罪？\n【答案】原罪是亚当、厄娃违命后传给全人类的天性创伤，使人倾向邪恶、丧失超性生命，由圣洗赦免。本罪是人自己明知故犯所犯的具体罪过。本罪又分大罪（重罪，丧失恩宠）和小罪（轻罪，伤害爱德）。","source":"《天主教教理》388-421条、1849-1864条","keywords":["原罪","本罪","大罪小罪","亚当厄娃"]},{"id":"cat-047","module":"catechism","category":"十诫与道德","title":"恩宠与超性三德","content":"【问题】什么是恩宠？信、望、爱三德是什么？\n【答案】恩宠是天主白白赐下的超性生命，使我们成义、成为天主子女。与之相配的三超性德是：信德（信从天主所启示的一切）、望德（盼望天国和永生）、爱德（为天主而爱天主及爱人如己），其中爱德最大。","source":"《天主教教理》1996-2005条、1810-1845条（信1814、望1817、爱1822）","keywords":["恩宠","信德望德爱德","三超性德","成义"]},{"id":"cat-048","module":"catechism","category":"祈祷与灵修","title":"祈祷的意义","content":"【问题】什么是祈祷？为什么要祈祷？\n【答案】祈祷是人心向上主的抬举，是心思、情感和行为与天主的对话。它不是要改变天主，而是让人开放自己、承行天主旨意、获得力量。基督徒的祈祷以基督的名、赖圣神、归于天父。","source":"《天主教教理》2558-2565条","keywords":["祈祷","对话","抬举心神","承行主旨"]},{"id":"cat-049","module":"catechism","category":"祈祷与灵修","title":"天主经（主祷文）","content":"【问题】天主经有什么地位？\n【答案】天主经是耶稣亲自教门徒的祷文，是「一切祷文中最完美的」。它以「我们在天的父」开始，包含七项祈求：愿祢的名受显扬、愿祢的国来临、愿祢的旨意承行、求日用之粮、求赦罪、求不陷诱惑、救免于凶恶。","source":"《天主教教理》2759-2865条；玛6:9-13","keywords":["天主经","主祷文","七项祈求","圣经"]},{"id":"cat-050","module":"catechism","category":"祈祷与灵修","title":"圣母经与玫瑰经","content":"【问题】圣母经和玫瑰经是什么？\n【答案】圣母经是向玛利亚致敬的祷文，前半取自天使报喜和圣妇依撒伯尔的话，后半祈求她为罪人转求。玫瑰经是默想耶稣和玛利亚一生奥迹（欢喜、痛苦、荣福、光明五组）并配合圣母经、天主经的循环祈祷。","source":"《天主教教理》2674-2679条","keywords":["圣母经","玫瑰经","报喜","默想"]},{"id":"cat-051","module":"catechism","category":"祈祷与灵修","title":"省察与痛悔","content":"【问题】告解前应做什么？\n【答案】告解前应先省察良心，对照十诫和福音，认清自己所犯的罪过；再发痛悔，为得罪天主而伤心，并有定改决心，立志不再犯，且尽力补偿。痛悔是和好圣事的关键。","source":"《天主教教理》1450-1460条","keywords":["省察","痛悔","定改","告解预备"]},{"id":"cat-052","module":"catechism","category":"祈祷与灵修","title":"祈祷的方式与恒心","content":"【问题】基督徒常用哪些祈祷方式？\n【答案】包括口祷、默想、静祷（默观）、集体礼仪祈祷（弥撒、日课）、敬礼等。祈祷的精髓在于恒心和与天主爱的关系；即使在枯干、无感觉时仍应坚持，因为祈祷首先是天主的恩赐。","source":"《天主教教理》2650-2682条、2705-2724条","keywords":["口祷","默想","默观","恒心"]},{"id":"cat-053","module":"catechism","category":"圣母与诸圣","title":"圣母为天主之母","content":"【问题】为什么称玛利亚为「天主之母」（天主生母）？\n【答案】玛利亚所怀所生的耶稣，在唯一的位格内既是真人又是真天主。因此她在真理上是天主子的母亲，教会尊她为天主之母（Theotokos），这是以弗所大公会议（431年）定断的。","source":"《天主教教理》495条、509条","keywords":["圣母","天主之母","以弗所","Theotokos"]},{"id":"cat-054","module":"catechism","category":"圣母与诸圣","title":"圣母卒世童贞","content":"【问题】玛利亚是否始终是童贞女？\n【答案】教会相信玛利亚在怀孕耶稣前、生产时、生产后，始终是童贞女（semper virgo）。耶稣由圣神而成孕，没有人间父亲。她的童贞是她全心承行天主旨意、为爱天国而奉献的标记。","source":"《天主教教理》499条、510条","keywords":["卒世童贞","圣神受孕","童贞女","承主旨意"]},{"id":"cat-055","module":"catechism","category":"圣母与诸圣","title":"圣母无原罪","content":"【问题】什么是圣母无原罪？\n【答案】因着基督的功绩，玛利亚在受孕之初，便蒙天主特殊恩典，免受原罪沾染，全身圣洁。这不是说她不需要救赎，而是她被救赎得更早、更完全。1854年由教宗定断为当信的道理。","source":"《天主教教理》490-493条","keywords":["无原罪","圣洁","1854","特殊恩典"]},{"id":"cat-056","module":"catechism","category":"圣母与诸圣","title":"圣母升天","content":"【问题】圣母升天是什么意思？\n【答案】教会相信，在尘世生命结束后，玛利亚的灵魂和肉身一同被提升天，享有基督复活的光荣。她是教会将来达至圆满的预象和母亲。1950年由教宗定断为当信的道理。","source":"《天主教教理》966-970条","keywords":["圣母升天","1950","肉身升天","教会预象"]},{"id":"cat-057","module":"catechism","category":"圣母与诸圣","title":"敬礼圣母圣人与崇拜天主的区别","content":"【问题】天主教敬拜圣母和圣人吗？\n【答案】不。只有天主当受至高的钦崇（latria 朝拜）。对圣母我们用「敬礼」（dulia 中的特殊尊荣，称 hyperdulia ），对圣人用普通「敬礼」，这与对天主的崇拜在性质上根本不同。敬礼圣人最终指向天主，并激发我们效法他们的德行。","source":"《天主教教理》971条、2113-2114条","keywords":["钦崇","敬礼","朝拜区别","latria","dulia"]},{"id":"cat-058","module":"catechism","category":"圣母与诸圣","title":"圣人的转祷","content":"【问题】为什么请圣人祈祷？\n【答案】圣人在天国有圆满的生命，与基督紧密结合。他们仍关怀地上的旅人和教会。请他们转祷，并不是绕过基督——基督是唯一的中保——而是请他们以弟兄和朋友的身分，偕同我们一同祈求天主，使恩典藉教会的共融临到我们。","source":"《天主教教理》956-962条、2683-2684条","keywords":["圣人","转祷","中保","诸圣相通功"]},{"id":"cat-059","module":"catechism","category":"末世与终局","title":"死亡与私审判","content":"【问题】人死后会怎样？\n【答案】人一死，身体与灵魂分离，灵魂立刻到天主面前接受私审判：凭其信德和行为被接纳到天上的光荣、炼狱的炼净，或被投入永远的地狱。死亡是尘世旅程的结束，也是我们面对天主爱的时刻。","source":"《天主教教理》1005-1014条、1021-1022条","keywords":["死亡","私审判","灵魂","终局"]},{"id":"cat-060","module":"catechism","category":"末世与终局","title":"天堂","content":"【问题】天堂是什么？\n【答案】天堂是那些死于天主恩宠、未需再炼净的人，永远享见天主、与圣三及诸圣共享圆满爱的境界。这是人受造的终向和真福，是「眼睛未曾看见、耳朵未曾听见」的光荣。","source":"《天主教教理》1023-1029条","keywords":["天堂","享见天主","真福","终向"]},{"id":"cat-061","module":"catechism","category":"末世与终局","title":"地狱","content":"【问题】地狱是什么？人会下地狱吗？\n【答案】地狱是人自由选择致死的大罪、至死不肯悔改、拒绝天主之爱的永远自绝。它不是天主预定人去的地方，而是人对天主「不」的永恒后果。天主愿意人人得救，祂的公义与仁慈在地狱的奥迹中始终是信徒敬畏的秘密。","source":"《天主教教理》1033-1037条","keywords":["地狱","永远丧失","致死之罪","自由选择"]},{"id":"cat-062","module":"catechism","category":"末世与终局","title":"炼狱","content":"【问题】炼狱是什么？为炼灵祈祷有用吗？\n【答案】炼狱是那些在天主恩宠中死去、尚未完全炼净的人，在那里被洁净，好能进入天国的光荣。他们已确定得救，但需补赎。活人的弥撒、祈祷、施舍和大赦，按教会的通功，可以帮助炼灵。","source":"《天主教教理》1030-1032条","keywords":["炼狱","炼灵","补赎","通功","大赦"]},{"id":"cat-063","module":"catechism","category":"末世与终局","title":"肉身复活","content":"【问题】相信肉身复活是什么意思？\n【答案】末日时，一切死者都要复活：善人恶人都要复活身体，与灵魂重新结合，接受赏报。不是同一具腐败的身体被找回，而是天主使我们的身体肖似基督光荣的身体。这是信经坚定宣认的道理。","source":"《天主教教理》988-1013条","keywords":["肉身复活","末日","光荣身体","信经"]},{"id":"cat-064","module":"catechism","category":"末世与终局","title":"末日审判与新天新地","content":"【问题】公审判时会发生什么？\n【答案】基督再度光荣来临时，要举行公审判，使一切罪恶和良善的后果显明，天主的公义与爱获得最后的胜利。此后旧世界净化，天主成为「万物之中的万有」，出现新天新地、完满的天国。这是信友望德的最后对象。","source":"《天主教教理》1038-1050条","keywords":["公审判","新天新地","天国圆满","望德"]}],"bible_stories":[{"id":"bib-001","module":"bible","category":"旧约·创世与族长","title":"天主六日创世、安息日","content":"【故事】\n起初，天主创造了天地。大地混沌空虚，深渊一片黑暗，天主的神运行在水面上。天主说：「要有光」，就有了光。\n第一天，光与暗分开，有了昼夜；第二天，水分开成苍穹上下；第三天，旱地与海洋出现，地上长出各种青草菜蔬和果树。\n第四天，天上出现日月星辰，掌管昼夜、记定时令；第五天，水中生出各种鱼，空中飞出各种鸟；第六天，地上生出各种牲畜、爬虫和野兽。\n最后，天主照自己的肖像造了人，造男造女，吩咐他们生育繁殖，治理大地。天主看所造的一切，认为很好。\n到第七日，天主完成了工程，安息了。天主降福第七日，定为圣日，因为在这日祂停止了造化之工。\n\n【圣经出处】\n创 1:1–2:3\n\n【信仰启示】\n天地万物都出于上主的美意，人是祂肖像所造，格外尊贵；我们当敬拜造物主，也当效法祂，在劳碌中守安息、归向祂。","source":"思高本《创世纪》第1-2章","keywords":["创世","安息日","天主造人","六日工程"]},{"id":"bib-002","module":"bible","category":"旧约·创世与族长","title":"原祖犯罪、被逐出伊甸园","content":"【故事】\n天主把亚当和厄娃安置在伊甸园中，吩咐他们：园中各样树上的果子都可吃，唯独「知善恶树」上的果子不可吃，吃的那天必要死。\n蛇比田野一切野兽更狡猾，它骗女人说：「你们不一定死。你们吃了眼睛就会开，便如天主一样知道善恶。」\n女人见那棵树的果子悦目诱人，就摘下吃了，又给她丈夫吃。二人的眼睛就开了，才知道自己赤身裸体，便编了无花果树叶做裙子。\n天主要追究，亚当把责任推给女人，女人又推给蛇。天主诅咒蛇，罚女人怀胎受苦、恋慕丈夫，罚男人终身劳苦才有饭吃。\n天主于是把他们赶出伊甸园，又在伊甸园东边安置了革鲁宾和转动的火剑，把守通往生命树的路。\n\n【圣经出处】\n创 2:4–3:24\n\n【信仰启示】\n人类的痛苦和死亡，根源在于不肯听信天主、偏随私意；但天主在诅咒中已许下一位「女人后裔」要踏碎蛇头，这是最早的救恩应许。","source":"思高本《创世纪》第2-3章","keywords":["原祖","原罪","厄娃","蛇","伊甸园"]},{"id":"bib-003","module":"bible","category":"旧约·创世与族长","title":"加音杀弟亚伯尔","content":"【故事】\n亚当和厄娃生了两个儿子：哥哥加音耕田，弟弟亚伯尔牧羊。有一天，二人各把出产献给天主。\n天主看中了亚伯尔和他的祭品，却没有看中加音和他的祭品。加音大为愤怒，脸色沉了下来。\n天主对加音说：「你为什么发怒？你若行善，不就可以仰起脸来吗？罪恶就伏在门前，它要对你觊觎，你却要管治它。」\n加音却在田间乘其不意，把弟弟亚伯尔杀了。\n天主问加音：「你弟弟亚伯尔在哪里？」加音强辩：「我不知道！难道我是看守我弟弟的人吗？」天主便罚他从地上受咒诅，流离飘荡；但在他身上做了记号，免得人遇见他就杀他。\n\n【圣经出处】\n创 4:1–16\n\n【信仰启示】\n上主看重心地与诚心超过外在的祭品；嫉妒能把人变成凶手。我们当对自己的弟兄负责，不可对他人的痛苦袖手旁观。","source":"思高本《创世纪》第4章","keywords":["加音","亚伯尔","嫉妒","祭献"]},{"id":"bib-004","module":"bible","category":"旧约·创世与族长","title":"诺厄方舟与大洪水","content":"【故事】\n人类在地上罪恶很大，心中思念的尽是恶。天主后悔造人，想用洪水净化世界，却看中了诺厄——他是个正义完人，与天主同行。\n天主叫诺厄用歌斐木造一只大船，分上中下三层，内外涂上沥青，又叫他带妻子、三个儿子儿妇，并各样活物每样一对（洁净的七对）进方舟。\n诺厄一切照天主所吩咐的行了。七天后，大雨降在地上四十昼夜，深渊的泉源和天上的闸门都开了，水势浩大，淹没了全地。\n凡有气息的都死了，只有方舟里诺厄一家和那些活物保全了。过了一百五十天，水渐渐退去，方舟停在阿尔特山上。诺厄先后放出乌鸦和鸽子，鸽子叼回橄榄叶，知道水已退了。\n诺厄出了方舟，为天主筑坛，拿各种洁净的牛羊作全燔祭。天主闻了那馨香，心中起誓：再不以洪水消灭活物。祂以彩虹为立约的记号，放在云彩中。\n\n【圣经出处】\n创 6:9–9:17\n\n【信仰启示】\n罪恶使世界败坏，天主却预留了救赎；方舟预象教会——凡信而顺从的，都在其中得救。彩虹提醒我们：天主是守约施慈爱的主。","source":"思高本《创世纪》第6-9章","keywords":["诺厄","方舟","洪水","彩虹","救赎"]},{"id":"bib-005","module":"bible","category":"旧约·创世与族长","title":"巴贝尔塔","content":"【故事】\n大洪水以后，人类的后代在东方迁徙，发现了一块史纳尔平原，就住在那里。\n大家彼此商量：「来，我们烧砖烧透。」他们拿砖当石头，拿柏油当灰泥。又说：「来，我们要建造一座城和一座塔，塔顶通天，为我们扬名，免得我们分散全地。」\n上主下来，要看世人所建的城和塔，说：「他们既是同一民族，说同一语言，以后他们所欲行的，就没有可阻止的了。」\n上主就下去混乱了他们的语言，使彼此听不懂；又把他们从那里分散到全地面，那城便叫做「巴贝尔」，因为上主在那里混乱了全地的语言。\n\n【圣经出处】\n创 11:1–9\n\n【信仰启示】\n人妄图靠自己扬名、与天主同等，是骄傲的表现；骄傲必招致混乱。我们当承认自己的有限，把荣耀归于天主。","source":"思高本《创世纪》第11章","keywords":["巴贝尔塔","语言混乱","骄傲"]},{"id":"bib-006","module":"bible","category":"旧约·创世与族长","title":"亚巴郎蒙召","content":"【故事】\n那时，亚巴郎住在乌尔族，事奉别的神。上主对亚巴郎说：「离开你的故乡、你的家族和父家，往我指给你的地方去。\n我要使你成为一大民族，我要降福你，使你的名字成名；你必要成为万福。我要降福那降福你的，咒诅那咒诅你的；地上万民都要因你获得降福。」\n亚巴郎就照上主的话去做了，他带着妻子撒辣、侄子罗特和在哈兰积蓄的财物、所得的奴仆，走向客纳罕地，那年他七十五岁。\n到了客纳罕，上主又向亚巴郎显现说：「我要把这地赐给你的后裔。」亚巴郎就在那里给显现的上主筑了一座祭坛。\n\n【圣经出处】\n创 12:1–9\n\n【信仰启示】\n信仰就是听见天主的话就动身，不看见应许也前行。亚巴郎因信德离开故土，成为「信徒之父」；我们也当听从主的呼召，放下一切跟随祂。","source":"思高本《创世纪》第12章","keywords":["亚巴郎","蒙召","信德","应许之地"]},{"id":"bib-007","module":"bible","category":"旧约·创世与族长","title":"亚巴郎献依撒格","content":"【故事】\n这些事以后，天主试验亚巴郎，对他说：「亚巴郎！」他答：「我在这里。」天主说：「你带你的儿子，你心爱的独生子依撒格，到摩黎雅地去，在我指给你的一座山上，把他献为全燔祭。」\n亚巴郎清早就起来，备上驴，带两个仆人、儿子依撒格，又劈好了祭柴，就动身往天主指示的地方去。\n走了三天，亚巴郎举目远远看见了那地方，对仆人说：「你们和驴在此等候，我与童子往那里去朝拜，然后回到你们这里来。」\n亚巴郎把祭柴放在依撒格肩上，自己手拿火钳和刀。依撒格说：「父亲，火和柴都有了，但祭献的羔羊在哪里？」亚巴郎答：「天主自会预备羔羊。」\n到了地方，亚巴郎筑好祭坛，摆好柴，捆绑儿子依撒格，把他放在祭坛的柴上。他正伸手举刀要献时，上主的使者从天上喊他：「亚巴郎，不可下手害这童子！」原来他身后有一只公羊，两角缠在灌木中，他就取来献为全燔祭，代替自己的儿子。\n\n【圣经出处】\n创 22:1–19\n\n【信仰启示】\n亚巴郎把最心爱的独生子献给主，预象天父把自己的独生子耶稣赐给我们。真信德是把最好的、最舍不得的交给主；天主自会预备救赎的羔羊。","source":"思高本《创世纪》第22章","keywords":["亚巴郎","依撒格","献子","考验","预象"]},{"id":"bib-008","module":"bible","category":"旧约·创世与族长","title":"雅各伯骗取祝福、与天使摔跤","content":"【故事】\n依撒格年老眼目昏花，要召长子厄撒乌来吃野味、给他祝福。利贝加听见，叫小儿子雅各伯假扮哥哥，穿哥哥的衣服、套上山羔皮，骗得父亲的祝福。\n厄撒乌回来愤恨，要杀雅各伯。雅各伯只得逃往舅舅拉班家，在路途上梦见一道天梯，天使上下，上主立约：「我必与你同在，保佑你。」\n为拉班做工二十年，雅各伯娶妻生子，致富后带全家返回故乡。渡过雅博河的前夜，有一个人来与他摔跤，直到黎明。那人见胜不过他，就摸了他的大腿窝，雅各伯的大腿就瘸了。\n那人说：「你不要再叫雅各伯，要叫以色列，因为你与天主与人搏斗，都获得了胜利。」雅各伯给那地方起名叫「培尼耳」，说：「我面对面见了天主，我的性命仍得保全。」\n\n【圣经出处】\n创 25:19–34；27；28:10–22；32:22–32\n\n【信仰启示】\n雅各伯靠欺骗起家，却在一夜与主摔跤后被改名为「以色列」——与天主拼搏的人。信仰的历程常是与自己的软弱奋斗，终被天主改变。","source":"思高本《创世纪》第25、27-28、32章","keywords":["雅各伯","以色列","天梯","摔跤","改名"]},{"id":"bib-009","module":"bible","category":"旧约·创世与族长","title":"若瑟被卖埃及、解救全家","content":"【故事】\n若瑟是雅各伯最爱的儿子，父亲给他做了一件彩衣。哥哥们嫉妒他，又因他做的两个梦（禾捆下拜、日月七星俯首）而更恨他。\n一次，哥哥们在野外把他丢进枯井，后来又把他以二十块银子卖给过路的以士玛力商人，带到埃及。\n若瑟在埃及军官波提乏家做事，因主人之妻诬陷而下狱。但天主与他同在。在狱中，他为酒正和膳长解梦；后来法老做了无人能解的梦——七头肥壮母牛被七头瘦母牛吞掉。\n酒正想起若瑟。若瑟为法老解梦：埃及将有七个丰年，随后七个荒年。法老便派若瑟治理全埃及，在丰年聚粮。\n七荒年临到，各地都来埃及买粮。若瑟的哥哥们也来了。若瑟几番试探，终于认出他们，放声大哭，说：「不要因为把我卖到这里自忧自责，这原是天主派遣我先来，为保全你们的性命。」雅各伯全家便迁到埃及的哥笙地居住。\n\n【圣经出处】\n创 37；39–47\n\n【信仰启示】\n人存心要害若瑟，天主却把这事转为美善——为拯救全家。一切苦难都在天主手中，信靠祂的人，坏事终能变成好事。","source":"思高本《创世纪》第37、39-47章","keywords":["若瑟","彩衣","解梦","埃及","宽恕"]},{"id":"bib-010","module":"bible","category":"旧约·出埃及与律法","title":"梅瑟诞生与逃亡","content":"【故事】\n埃及新王怕以色列人增多，就压迫他们，下令把男婴丢进尼罗河。有一个肋未夫妇生了个男孩，见他俊美，藏了三个月，实在藏不住了。\n她取了一个蒲草箱，涂上沥青和石漆，把孩子放进去，搁在河边的芦苇中。孩子的姐姐米黎岸远远站着，要看他究竟怎样。\n法老的女儿来河边洗澡，看见箱子，就叫婢女取来。开箱子一看，是个男孩，正在啼哭，就怜悯他，说：「这必是希伯来人的孩子。」\n姐姐赶紧跑去对公主说：「我去从希伯来人中请一个乳母来，为你乳养这孩子，可以吗？」公主说：「可以。」孩子的母亲便来乳养他，孩子长大，母亲把他送回法老女儿身边，他就成了公主的儿子，起名叫梅瑟。\n梅瑟长大后，有一天看见一个埃及人殴打一个希伯来人同胞，他左右张望，见没有人，就把那埃及人打死，藏在沙中。法老听说这事，就想杀梅瑟。梅瑟逃往米德杨，在那里娶了妻子，牧养岳父的羊群。\n\n【圣经出处】\n出 1:22–2:25\n\n【信仰启示】\n天主在最绝望处已预备了拯救者：蒲草箱在河中漂浮，正是救恩的预象。落在人手中的孩子，其实在天主的手中。","source":"思高本《出谷纪》第1-2章","keywords":["梅瑟","蒲草箱","公主","逃亡"]},{"id":"bib-011","module":"bible","category":"旧约·出埃及与律法","title":"燃烧的荆棘、梅瑟蒙召","content":"【故事】\n梅瑟牧养岳父耶特洛的羊群，有一天领羊群到了旷野，到了天主的山，就是曷勒布（西乃）山。\n上主的使者从荆棘火焰中显现出来。梅瑟观看：荆棘上火在烧，却没有烧毁。梅瑟想：「我要过去看看这奇异的景象，为什么荆棘烧不毁？」\n天主见他过去观看，就从荆棘中喊他：「梅瑟，梅瑟！」他答：「我在这里。」天主说：「不可靠近此地，把你脚上的鞋脱下，因为你站的地方是圣地。」\n又说：「我确已看见了我百姓在埃及所受的困苦，我已听见了他们因监工的压迫而发的哀号。我下来要把他们从埃及人手中救出来，领他们到一个肥美宽阔的地方。现在你去吧！我要派你到法老那里，把我的百姓以色列领出来。」\n梅瑟推辞：「我是什么人，竟能去见法老？」天主答：「我必与你同在。」又告诉他自己的名字：「我是自有者。」并叫他把手杖变蛇、把手长癞，作为明证。\n\n【圣经出处】\n出 3:1–4:17\n\n【信仰启示】\n烧而不毁的荆棘，象征被苦难压迫却仍属天主的百姓。天主垂听痛苦者的哀号，并亲自下來拯救；祂召谁，就与谁同在。","source":"思高本《出谷纪》第3-4章","keywords":["梅瑟","荆棘","自有者","蒙召","手杖"]},{"id":"bib-012","module":"bible","category":"旧约·出埃及与律法","title":"十灾与逾越羔羊","content":"【故事】\n梅瑟和亚郎去见法老，要求让以色列人离开埃及去旷野祭祀天主。法老硬着心肠不允。天主便藉十灾教训埃及：水变血、青蛙、蚊虫、苍蝇、畜疫、疮痍、冰雹、蝗虫、黑暗。\n每灾之后法老虽一时答应，过后又反悔。天主便准备最后一灾。\n天主吩咐以色列人：本月初十，各家取一只无残疾的一岁羔羊，十四日黄昏宰杀，把血涂在门楣和左右门框上。当夜吃烤羔羊肉，与无酵饼和苦菜同吃，且要赶紧吃——这是上主的逾越节。\n午夜，上主巡行埃及地，击杀埃及一切长子，从法老的长子到囚犯的长子，以及一切头生的牲畜。凡门上有血记号的，上主就越过那家，不命毁灭者进去。\n埃及全国大小都哀号起来，没有一家不死人的。法老连夜赶梅瑟和亚郎，说：「起来，由你们中间出去！按你们所说，去事奉上主吧！」以色列人便从兰塞起程，连面团都还未发酵。\n\n【圣经出处】\n出 7:12\n\n【信仰启示】\n羔羊的血是人命得救的记号——预象基督这只真正的逾越羔羊，祂的血拯救我们脱离罪恶的奴役。我们当年年庆祝逾越，记念主的救赎。","source":"思高本《出谷纪》第7-12章","keywords":["十灾","逾越节","羔羊","血","长子"]},{"id":"bib-013","module":"bible","category":"旧约·出埃及与律法","title":"过红海","content":"【故事】\n以色列人从埃及出来，非沿非利士的路走，而是绕旷野的路。天主在他们前面行：白天用云柱引路，夜间用火柱照明，使他们日夜都能行走。\n法老又反悔，带六百辆战车和军队追赶，在海边扎营的以色列人对面追上了。以色列人一见埃及军队追来，就非常害怕，向梅瑟发牢骚：「难道在埃及没有坟地，你把我们带来死在旷野吗？」\n梅瑟回答百姓：「不要害怕，静默罢！要看上主今天为你们施行的救恩，因为你们今天所见的埃及人，永远再见不到。」\n天主叫梅瑟向海伸杖。梅瑟便伸手向海一指，上主便用东风整夜吹动，使海变成干地，水分开，成了两道墙。以色列人下到海中走干地，从海中过去。\n埃及的战车和骑兵追入海中，上主使他们的车轮滑脱。到了清晨，梅瑟再向海伸杖，海水复原，把法老的全军淹没在海中，一个也没有剩下。以色列人见了上主的大能，就信从了上主和祂的仆人梅瑟。\n\n【圣经出处】\n出 13:17–15:21\n\n【信仰启示】\n红海预象圣洗：在受奴役与救恩之间，只有藉着水才能过去。惊惶时不要再发牢骚，要举目看主——祂必为我们争战。","source":"思高本《出谷纪》第13-15章","keywords":["红海","云柱","火柱","伸杖","洗礼预象"]},{"id":"bib-014","module":"bible","category":"旧约·出埃及与律法","title":"西乃山授十诫","content":"【故事】\n以色列人出埃及后三个月，来到西乃旷野，在山对面扎营。天主在山上呼唤梅瑟，要他告诉百姓：「我如鹰把你们背起来，献给了我。如今你们若真听我的话，遵守我的约，你们就特作我的子民。」\n百姓全体答说：「凡上主吩咐的，我们都要奉行。」到了第三天早晨，山上雷电交加，浓云密布，角声非常响亮，全山震动。天主在火中降临山上。\n天主在山上亲口颁布了十诫，这是双方盟约的核心：\n一、除我之外，你不可有别的神；二、不可造任何偶像；三、不可妄称上主你天主的名；四、应记念安息日，守为圣日；五、应孝敬你的父母；六、不可杀人；七、不可奸淫；八、不可偷盗；九、不可妄证害人；十、不可贪恋他人的房屋、妻子、仆婢、牛驴及任何财物。\n\n【圣经出处】\n出 19:1–20:21\n\n【信仰启示】\n十诫不是重担，而是天主给被救之民的生活蓝图：先爱天主（前四诫），再爱近人（后六诫）。我们蒙召，就是要活在这爱德的法律中。","source":"思高本《出谷纪》第19-20章","keywords":["十诫","西乃山","盟约","法律"]},{"id":"bib-015","module":"bible","category":"旧约·出埃及与律法","title":"旷野赐玛纳","content":"【故事】\n以色列人从厄林起程，在出埃及后第十五日来到了新旷野。全会众在旷野向梅瑟、亚郎发牢骚：\n「巴不得我们早就在埃及国坐在肉锅旁边，吃得饱足！你们却领我们到这旷野，要叫这全体会众饿死！」\n上主对梅瑟说：「看，我要由天上给你们降下食粮。百姓要出去，每天按当天的需要拾取，为试探他们是否遵行我的法律。」\n傍晚，有鹌鹑飞来，遮盖了营幕；早晨，营四围有一层露水。露水上升以后，地上有个小东西，像霜那样小，又白又细。以色列人见了，不知道是什么，就彼此说：「这是什么？」梅瑟告诉他们：「这就是上主赐给你们吃的食物。」他们按它的意思叫「玛纳」，样子像芫荽子，白的，滋味像加蜜的薄饼。\n天主吩咐每天拾取当天的分量，第六天要拾取双倍，因为第七日是安息圣日，旷野里找不到。他们吃玛纳四十年，直到进入客纳罕边境。\n\n【圣经出处】\n出 16:1–36\n\n【信仰启示】\n人不能只靠饼生活，也靠天主口中的每一句话。玛纳预象天主圣言与圣体——我们的灵魂每日都需要从天降下的食粮。","source":"思高本《出谷纪》第16章","keywords":["玛纳","鹌鹑","旷野","天降食粮","圣体预象"]},{"id":"bib-016","module":"bible","category":"旧约·出埃及与律法","title":"若苏厄过约但、陷耶里哥","content":"【故事】\n梅瑟死后，天主选拔若苏厄继续带领百姓。上主勉励他：「你当坚强勇猛，因为你要使这百姓占领我誓许给他们的土地。我必时常与你在一起，决不抛弃你。」\n百姓到了约但河边，当时约但河水在涨溢。天主叫抬约柜的司祭先把脚踏入水中——水便在上游立起成垒，下游的水流入红海，全百姓便在干地上过了约但。\n到了耶里哥城。天主指示若苏厄：你们的战士每天要绕城一周，连续六天；七位司祭要吹羊角，走在约柜前。\n第七日，要绕城七次。到了第七次，司祭一吹角声，百姓就要大声呼喊。那时，耶里哥的城墙必要完全塌陷。\n一切照办了。第七日绕完七次，角声一响，百姓大声呼喊，城墙随即塌陷。百姓就奋勇登城，把城夺取，只救起了隐藏过探子的辣哈布一家。\n\n【圣经出处】\n若苏厄书 3–6\n\n【信仰启示】\n攻陷坚城不靠武力，而靠信顺与呐喊——约柜、号角、重复的行动，都指向基督的十字架。凡信赖主的，再高的墙也要倒塌。","source":"思高本《若苏厄书》第3-6章","keywords":["若苏厄","约但河","耶里哥","号角","辣哈布"]},{"id":"bib-017","module":"bible","category":"旧约·君王与先知","title":"三松力摧非肋士人","content":"【故事】\n以色列人又行邪，天主把他们交在非肋士人手中四十年。有一个次辣人叫玛诺亚，妻子不育。上主的使者向她显现，预言她将生一个儿子，且是剃发的「纳齐尔」，要开始拯救以色列脱离非肋士人。这孩子就是三松。\n三松长大，天主祝福他。他曾徒手撕裂一只狮子，如撕裂山羊羔。后来他在婚宴上出谜语，被非肋士人诱出答案，就怒而打死三十人。\n三松因愤怒去了迦萨，爱上了培肋舍特女子德里拉。非肋士人首领贿她：「你探知三松为什么这样力大，我们每人给你一千一百银钱。」\n德里拉百般诱骗，三松最后吐露：「我若剃了头发，我的力气就离开我。」她趁他熟睡剃了他的发。天主的离弃使他无力，非肋士人挖了他的眼睛，拿铜链锁着，叫他在监里推磨。\n但他的头发又渐渐长起来。非肋士人聚集在达贡神庙献祭，把三松从监里提出来戏耍。三松求天主：「主，天主，求你记念我，求你使我这回恢复力量一次！」他抱住庙中两根主要柱子，尽力屈身，神庙就倒塌，压死了全城的非肋士人。他死时杀的人，比活着时杀的还多。\n\n【圣经出处】\n民长纪 13–16\n\n【信仰启示】\n三松的力量来自天主对他誓愿的恩典，不来自他自己的能耐；情欲与轻诺使他失去力量。头发被剃是一回事，心离天主才是真正的失明。","source":"思高本《民长纪》第13-16章","keywords":["三松","德里拉","纳齐尔","柱子","力量"]},{"id":"bib-018","module":"bible","category":"旧约·君王与先知","title":"卢德拾穗、随亲归乡","content":"【故事】\n在民长时代，国中闹饥荒。有一个厄法郎人，带着妻子纳敖米和两个儿子，往摩阿布地侨居。后来丈夫和两个儿子都死了，只剩纳敖米和两个摩阿布儿媳：敖尔帕和卢德。\n纳敖米听说上主眷顾自己的百姓，赐给食物，就决定返乡。她劝两个儿媳回娘家改嫁，二人哭着不舍。敖尔帕最终留下，卢德却不肯离开她。\n卢德对纳敖米说：「你到哪里去，我也要去哪里；你的百姓就是我的百姓，你的天主就是我的天主。你死在哪里，我也死在那里，葬在那里。」\n二人回到白冷，正值大麦收割。卢德为糊口，到田间跟在收割者后拾取掉落的麦穗。她恰巧走到了波阿兹的田间——波阿兹是纳敖米亡夫的近亲。\n波阿兹为人善良，吩咐仆人：「让她在我的禾捆中拾取，不要恫吓她。」又请她同吃饼。后来按「至近亲属」的规矩，波阿兹赎纳敖米家的地，并娶卢德为妻。他们生了儿子，就是达味王的曾祖。\n\n【圣经出处】\n卢德传 1–4\n\n【信仰启示】\n一个外邦摩阿布女子，因不舍一个丧亲的婆婆、一句「你的天主就是我的天主」，竟被列入耶稣的族谱。上主最眷顾孤苦、忠信的人。","source":"思高本《卢德传》全卷","keywords":["卢德","纳敖米","波阿兹","拾穗","忠爱"]},{"id":"bib-019","module":"bible","category":"旧约·君王与先知","title":"幼童撒慕尔夜间听召","content":"【故事】\n那时上主的话稀少，不常见异象。有一个厄弗辣因人，在本家事育，妻子亚加纳多年不生育，对手工达毘纳每年在席罗献年祭。亚加纳痛哭不饮，大司祭厄里以为她喝醉了。\n亚加纳倾诉：「我是个伤心的女人，我向上主倾诉苦情。」厄里便祝福她：「你平安去吧！愿以色列的天主赐给你所求的。」她果然生了个儿子，起名撒慕尔，意思是「我向上主求得了他」。\n断乳后，亚加纳就把孩子送到席罗，让他终身侍配上主。撒慕尔在厄里面前事奉上主，身穿细麻以弗得。\n一日，撒慕尔睡在上主的殿中——约柜所在的地方。上主呼唤：「撒慕尔，撒慕尔！」他跑到厄里那里：「我在这里，是你叫我吗？」厄里说没有。如此三次。\n厄里这才明白是上主在呼唤童子，便说：「你去睡罢！如再叫你，你就说：上主，请说，你的仆人聆听。」撒慕尔照办了。上主站在那里呼唤，向他启示了要惩罚厄里家的事。从旦至别士巴，众以色列人都知道上主立了撒慕尔为先知。\n\n【圣经出处】\n撒慕尔纪上 1–3\n\n【信仰启示】\n天主在安静的夜里呼唤孩子；听见召叫要有「请说，仆人聆听」的心。年幼不是借口，愿意听从的人，主就使用他。","source":"思高本《撒慕尔纪上》第1-3章","keywords":["撒慕尔","亚加纳","厄里","听召","先知"]},{"id":"bib-020","module":"bible","category":"旧约·君王与先知","title":"达味掷石胜哥肋雅","content":"【故事】\n非肋士人又来攻打以色列。他们的营中出了一个战将，名叫哥肋雅，身高近三米，头戴铜盔，身披重铠，枪杆粗如织布机轴。他每天出来骂阵四十天：「你们选一人出来与我决斗！他若胜了我们，我们就做你们的奴仆；我若胜了他，你们就做我们的奴仆。」\n撒乌耳王和以色列众人听了，都惊惶害怕。有一个白冷人叶西的小儿子达味，少年英俊，每日给父亲放羊。三个哥哥都在军中。\n叶西叫达味送面食给哥哥、给千夫长请安。达味到战地时，哥肋雅正在骂阵，达味听见了，就说：「这未受割损的非肋士人是谁，竟敢讥笑永生天主的军旅？」\n达味见无人敢上去，就见王自荐：「请我主不要因这非肋士人丧胆，你的仆人愿去与他决斗。」王说：「你不能去，你太年轻，他自幼就是战士。」达味答：\n「你仆人曾打死过狮子和熊。这未受割损的非肋士人，必像它们中的一个一样，因为他讥笑了永生天主的军旅。」达味在溪中拣了五块光滑石子，拿在机弦里。哥肋雅逼近时，达味快跑迎上，伸兜机弦，甩出石子，击中哥肋雅的额头，石子陷入额内，他就扑倒在地。达味跑过去，抽刀割下了他的头。\n\n【圣经出处】\n撒慕尔纪上 17\n\n【信仰启示】\n得胜不靠刀枪铠甲，而靠信靠万军的上主。我们生命中的「巨人」——恐惧、罪恶、绝症——都要靠这信心的石子被打倒。","source":"思高本《撒慕尔纪上》第17章","keywords":["达味","哥肋雅","机弦","石子","信心"]},{"id":"bib-021","module":"bible","category":"旧约·君王与先知","title":"撒罗满求智慧、建圣殿","content":"【故事】\n达味死后，儿子撒罗满即位。在基贝红，上主夜间梦中显现对他说：「你求我一件事，我要赐给你。」\n撒罗满说：「仆人不过是个幼童，不知道应如何出入。求你赐你仆人一颗能听能判的心，能辨别善恶，否则谁能判断你这众多的百姓呢？」\n上主喜悦他求的是这事，就说：「我必照你所求的，赐你一颗智慧和明达的心，使你在你以前无人相似你，在你以后也无人相似你。连你没有求的，我也赐给你：财富、尊荣。」\n此后，撒罗满用了七年时间，在耶路撒冷摩黎雅山，按达味所预备的图样，为上主建造了一座宏伟的圣殿。圣殿落成时，约柜被抬进内殿——至圣所，上主的云彩充满了殿。撒罗满面向全以色列举手祈祷：\n「天上，及天上的天，都容不下你，何况我所建造的这座殿宇？求你垂顾你仆人在这地方所发的祈祷。凡此后在此犯罪、向此殿祈祷的，求你从天上俯听，赦免。」\n\n【圣经出处】\n列王纪上 3；6–9\n\n【信仰启示】\n智慧胜于金银权势：上主喜悦我们先求祂的国和祂的义。圣殿是天主临在的记号；真正的圣殿，是天主圣神居住的人心。","source":"思高本《列王纪上》第3、6-9章","keywords":["撒罗满","智慧","圣殿","约柜","祈祷"]},{"id":"bib-022","module":"bible","category":"旧约·君王与先知","title":"厄里亚加尔默耳山决斗","content":"【故事】\n以色列王阿哈布娶了客纳罕女人依则贝耳，敬拜巴耳。国内三年半不下雨，遍地饥荒。上主叫厄里亚去见阿哈布。\n厄里亚对阿哈布说：「你召集全以色列，以及四百五十个巴耳先知、四百个阿舍辣先知，都到加尔默耳山来见我。」\n百姓到了山上，厄里亚前来说：「你们摇摆到几时？如果上主是天主，就服从祂；如果巴耳是天主，就服从巴耳。」\n厄里亚提议：你们取两只牛，一只给巴耳先知宰了放在柴上，不点火；他自己的一只放在柴上，也不点火。「你们呼求你们神的名，我呼求上主的名；那由火俯允的，就是真天主。」\n巴耳先知从早晨到中午不断呼求：「巴耳，求你俯听我们！」却毫无动静。他们跳着、嚎叫、用刀自割，到了晚上仍没有反应。到了晚祭的时候，厄里亚修好祭坛，引水浇在祭物和柴上，浇了三遍。\n于是，上主的火降下，烧尽了全燔祭、柴、石头和尘土，连沟里的水也烧干了。全体百姓看见了，就俯伏在地说：「上主才是天主！上主才是天主！」\n\n【圣经出处】\n列王纪上 18:20–40\n\n【信仰启示】\n拜偶像的人越喊越没有回答；真正的天主一祈祷就从天上降火。我们的神不是木头石头，而是能听、能行动、能拯救的活天主。","source":"思高本《列王纪上》第18章","keywords":["厄里亚","加尔默耳","巴耳","降火","先知"]},{"id":"bib-023","module":"bible","category":"旧约·君王与先知","title":"约纳被大鱼吞、劝尼尼微悔改","content":"【故事】\n上主的话临到约纳：「你起身往尼尼微大城去，向他们宣告我已鉴察到他们的邪恶。」约纳却起来，逃往塔尔史士，躲开上主。他下到约培，搭上一艘船往反方向去。\n上主却使海上起了大风，狂风巨浪几乎把船打碎。水手们惧怕，各向自己的神呼号，把货物抛入海。约纳却在船舱底熟睡。\n船长叫醒他：「快起来，呼求你的神！」众人掣签，掣出约纳。他们问他：「你做了什么事，招致这场风暴？」约纳答：「我敬拜上主——创造海洋和陆地的天主。为我把我抬起来抛入海罢，海就会平静。」\n他们虽拼命划桨，却不能靠岸，最后只好把约纳抛入海。海遂平息。上主却安排了一条大鱼，把约纳吞了。约纳在鱼腹内三天三夜，从鱼腹祈祷称赞天主。\n天主命大鱼，鱼就把约纳吐在旱地上。上主再吩咐他去尼尼微。约纳进城，只走了一天就宣告：「再过四十天，尼尼微必灭亡了！」尼尼微人就信了天主，从王到百姓都披苦衣、禁食悔改。天主见他们离弃恶行，就没有降灾。\n约纳为此很不高兴，向神发怒，求死。天主问他：「你这样发怒对吗？」天主借此教训他：尼尼微大城有十二万多人，你尚且爱惜自己的阴凉树，我岂不爱惜这大城吗？\n\n【圣经出处】\n约纳 1–4\n\n【信仰启示】\n天主的救恩不限于以色列，也愿意外邦人悔改得救。约纳逃跑，天主却一路追寻；我们不愿人得救的心，正是天主要纠正的心。","source":"思高本《约纳》全卷","keywords":["约纳","大鱼","尼尼微","悔改","外邦"]},{"id":"bib-024","module":"bible","category":"旧约·君王与先知","title":"达尼尔在狮子坑","content":"【故事】\n达尼尔在玛待王达里奥年间甚得王器重，王准备立他治理全国。其他总长和总督们嫉妒他，总想找茬控告他。他们知道达尼尔每日三次，跪在窗前，面向耶路撒冷，向自己的天主祈祷称颂。\n他们就劝王立一条严令：三十日内，凡敢向任何人或任何神，除向王以外，祈求的，就要被丢入狮子坑。王盖了印，使这禁令不得更改。\n达尼尔知道禁令已盖印，仍照常进入自己的房屋；楼上的窗户对着耶路撒冷，他仍每日三次屈膝祈祷，称颂他的天主，与往常一样。\n那些人就把达尼尔抓住，带到王前。王甚为难，想救达尼尔，但按禁令不得更改。他们就把达尼尔抛入狮子坑。\n王对达尼尔说：「你时常事奉的天主，必救你。」他们把坑口用石头封了。当夜王失眠，天一亮就起来，急忙往狮子坑去，悲声喊：「达尼尔！永生天主的仆人，你时常事奉的天主，是不是救了你脱离狮子？」\n达尼尔答：「愿吾王万岁！我的天主派遣了自己的使者，封住了狮子的口，它们没有伤害我，因为我在祂前蒙受了正义。」王大喜，叫人把他拉上来——达尼尔身上毫无损伤，因为他信赖自己的天主。\n\n【圣经出处】\n达尼尔 6\n\n【信仰启示】\n祈祷不能因禁令而停，因为我们应服从天主，而不是服从人。达尼尔在狮子中毫发无伤——真正的胆量，是在逼迫中仍面向耶路撒冷跪祷。","source":"思高本《达尼尔》第6章","keywords":["达尼尔","狮子坑","祈祷","禁令","拯救"]},{"id":"bib-025","module":"bible","category":"旧约·君王与先知","title":"约伯受苦与复荣","content":"【故事】\n乌斯地有个人名叫约伯，为人正直，敬畏天主，远离邪恶。他有七个儿子、三个女儿，七千只羊、三千骆驼、五百对牛、五百母驴，仆婢成群——东方人中没有比他更富有的。\n有一天，众子来侍立在上主面前，撒旦也在其中。上主问：你可曾留心看我的仆人约伯？世上没有人像他那样正直。撒旦答：约伯敬畏天主，不是平白无故吗？你不是四面围护他和他的家吗？现在你伸手，打击他所有的一切，他必要当面诅咒你。\n上主允许撒旦考验约伯。一天之间，示巴人抢走了牛羊、天火烧死羊群、迦色人抢走骆驼、狂风塌死他的儿女、浑身从脚掌到头顶长满毒疮。约伯便起来，撕裂外氅，剃了头，伏地朝拜说：\n「我赤身裸体由母胎而来，也赤身而去；上主赏赐，上主收回，愿上主的名受颂扬。」他的三个朋友来见他，见他痛苦万分，就七天七夜陪他坐在地上，不作声。\n经过漫长的辩论——约伯痛苦却不自认有罪、朋友们错误地论断他——天主最后从旋风中回答他，指出受造物的奥迹远超人的智力。约伯在尘土和灰烬中自怨自艾，悔改了。\n此后，上主使约伯再享繁荣，赐给他比以前多一倍的牛羊骆驼，又赐他七个儿子、三个女儿，他得享高寿，满见子孙而终。\n\n【圣经出处】\n约伯传 1–2；38–42\n\n【信仰启示】\n受苦不一定是因为犯了大罪；在难以理解的苦难中，仍要说「上主赏赐，上主收回，愿上主的名受颂扬」。天主终会为义人辨冤，并在最后赐下更大的福祉。","source":"思高本《约伯传》第1-2、38-42章","keywords":["约伯","苦难","撒旦","旋风","复荣"]},{"id":"bib-026","module":"bible","category":"新约·耶稣生平","title":"圣母领报与往顾依撒伯尔","content":"【故事】\n黑落德为犹太王时，有一位司祭名叫匝加利亚，妻子依撒伯尔也是亚郎后裔。二人年老无子。\n一天，匝加利亚进圣殿献香，上主的使者加俾额尔在祭坛右边显现。依撒伯尔年老不育，天使却预言她将生一个儿子，名叫若翰，要在主前预备百姓。\n到了第六个月，天使加俾额尔被天主派往加里肋亚一座城，名叫纳匝肋，到一个童贞女那里。她已许配给一个名叫若瑟的人，是达味家的；童贞女的名字叫玛利亚。\n天使进来对她说：「充满恩宠者，祝福你！上主与你同在。」玛利亚却因这话惊疑，思量这是什么问安。天使对她说：「玛利亚，不要害怕，因为你在天主前获得了宠幸。你将怀孕生子，并要给他起名叫耶稣。他将是伟大的，并被称为至高者的儿子。」\n玛利亚对天使说：「这事怎样成就？因为我还不认识男人。」天使回答：「圣神要临到你身上，至高者的能力要庇荫你。」玛利亚说：「请看，我是上主的婢女，愿照你的话成就于我罢！」\n玛利亚即刻动身，往山区去，进了匝加利亚的家，问候依撒伯尔。依撒伯尔一听见玛利亚的问候，胎在她腹内就跳了一下，依撒伯尔也充满了圣神，高声喊说：「在妇女中你是可祝福的！你胎中的果实也是可祝福的！我主的母亲到我这里来，怎会有这事？」\n\n【圣经出处】\n路 1:5–56\n\n【信仰启示】\n玛利亚因「我是上主的婢女，愿照你的话成就于我」而成为全人类的福源。愿我们也像圣母一样，把天主的话虚心承行，不按自己意思，只按主旨意。","source":"思高本《路加福音》第1章","keywords":["圣母","领报","加俾额尔","依撒伯尔","愿照你的话"]},{"id":"bib-027","module":"bible","category":"新约·耶稣生平","title":"白冷圣婴降生","content":"【故事】\n那时凯撒奥古斯都出令，叫天下人都报名登记。若瑟也从加里肋亚纳匝肋城上犹太去，到了达味的城，名叫白冷，因他本是达味家族的人，要和他的未婚妻玛利亚登记。玛利亚这时已怀了孕。\n他们在那里的时候，玛利亚产期到了，生了头胎儿子，用布包起来，放在马槽里，因为客店里没有地方。\n在那一带有牧人露宿，按更轮守夜，看守羊群。有上主的使者站在他们旁边，上主的荣耀环绕他们，他们就非常害怕。\n天使对他们说：「不要害怕！我给你们报一个为全百姓的大喜讯：今天在达味城，为你们诞生了一位救主，就是主默西亚。你们要在一个婴孩包着布，放在马槽中发现他。」\n忽然，有一大队天兵同那天使一齐赞美天主说：「在高天，荣耀归于天主！在地上，平安归于他所亲爱的人！」\n牧人们彼此说：「让我们到白冷去，看上主所通知我们的这件事。」他们赶快去了，找到了玛利亚和若瑟，以及那卧在马槽中的婴孩。\n\n【圣经出处】\n路 2:1–20；玛 1:18–2:12\n\n【信仰启示】\n救主降生在马槽——因为没有客栈。天主弃绝了世界的荣华，拣选了卑微。愿我们像牧人一样，赶快去朝拜这卑微却荣耀的圣婴。","source":"思高本《路加福音》第2章、《玛窦福音》第1-2章","keywords":["耶稣降生","白冷","马槽","牧人","圣婴"]},{"id":"bib-028","module":"bible","category":"新约·耶稣生平","title":"献耶稣于圣殿","content":"【故事】\n按梅瑟法律，满了八天，就给孩子行割礼，起名叫耶稣。满了取洁的日子，他们抱着孩子上耶路撒冷，要把他献给主。\n在耶路撒冷，有一个人名叫西默盎，这人正义虔诚，期待着以色列的安慰，而且圣神也临于他。圣神曾启示他：他未见上主的受傅者以前，决不见死。\n他被圣神感动，进入圣殿。那时，耶稣的父母抱着孩子进来，要按法律的惯例为他行礼。西默盎就双手接过他来，称扬天主说：\n「吾主，现在可照你的话，放你的仆人平安去了！因为我亲眼看见了你的救恩，即你在万民前所预备好的——为作揭示异邦的启明，和你百姓以色列的荣耀。」\n西默盎祝福他们，又向孩子的母亲玛利亚说：「这孩子已被立定，为使以色列中许多人跌倒和复起，并成为反对的记号——至于你，要有一把剑刺透你的灵魂——好叫许多人心中的思念显露出来。」\n又有一位女先知亚纳，是阿协尔支派法努耳的女儿，年纪很大，丈夫死后同她生活了七年，就守寡，已经八十四岁。她从不出圣殿，以禁食祈祷日夜事奉天主。就在这时刻，她前来称谢天主，并向所有期待耶路撒冷获救的人，讲论这孩子。\n\n【圣经出处】\n路 2:21–38\n\n【信仰启示】\n耶稣是万民的光，也是以色列的荣耀；他的来临使许多人跌倒复起。圣母的心将被利剑刺透。愿我们像西默盎，死前能亲眼见到主。","source":"思高本《路加福音》第2章","keywords":["献主","西默盎","亚纳","圣殿","光"]},{"id":"bib-029","module":"bible","category":"新约·耶稣生平","title":"耶稣受洗、圣神降临","content":"【故事】\n那时，耶稣从加里肋亚来到约旦河，到若翰那里，受他的洗。若翰却阻止他说：「我本来需要受你的洗，而你反倒来就我吗？」\n耶稣回答说：「你暂且容许罢，因为我们应这样，以完成全义。」若翰遂准许了他。\n耶稣受了洗，随即从水里上来。忽然，天为他开了，他看见天主的圣神，仿佛鸽子降下，来到他上边。\n又有声音从天上说：「这是我的爱子，我所喜悦的。」\n\n【圣经出处】\n玛 3:13–17；谷 1:9–11；路 3:21–22\n\n【信仰启示】\n耶稣本是无罪的，却甘受悔改的洗，与罪人认同。天父在天上印证，圣神以鸽子降临——三位一体在受洗现场一同显现。","source":"思高本《玛窦福音》第3章","keywords":["受洗","若翰","约旦河","圣神鸽子","天父声音"]},{"id":"bib-030","module":"bible","category":"新约·耶稣生平","title":"旷野四十天三退诱惑","content":"【故事】\n耶稣被圣神领到旷野，受魔鬼的试探。他四十天四十夜禁食，后来就饿了。\n那试探者前来对他说：「你若是天主子，就命这些石头变成饼罢。」他回答说：「经上记载：人生活不只靠饼，而也靠天主口中所发的每一句话。」\n魔鬼遂带他进了圣城，叫他站在圣殿顶上，对他说：「你若是天主子，就跳下去！因为经上记载：『他为你吩咐了自己的天使，他们要用手托着你，免得你的脚碰在石头上。』」\n耶稣对他说：「经上又记载：不可试探上主你的天主。」\n魔鬼又带他上了一座最高的山，把世上的一切国安和他们的荣华，指给他看，对他说：「你若俯伏朝拜我，我就把这一切交给你。」\n耶稣对他说：「撤旦，离开这里罢！因为经上记载：你要朝拜上主你的天主，惟独事奉他！」于是魔鬼离开了他，有天使前来服事他。\n\n【圣经出处】\n玛 4:1–11；路 4:1–13\n\n【信仰启示】\n耶稣处处以圣经回应试探——「经上记载」。饥饿、炫耀、权势，是三种典型诱惑。我们受试探时，也要靠天主的话得胜。","source":"思高本《玛窦福音》第4章","keywords":["诱惑","旷野","撤旦","饼","经上记载"]},{"id":"bib-031","module":"bible","category":"新约·耶稣生平","title":"召选首批宗徒、满载鱼获","content":"【故事】\n耶稣站在革乃撒勒湖边，群众拥挤他，要听天主的道理。他看见两只船停在湖边，渔夫下了船，正在洗网。\n耶稣上船，是伯多禄的那只，叫他把船从深处撑开一点；就坐下，从船上教训群众。\n他讲完了，对伯多禄说：「划到深处去，下你们的网捕鱼罢！」伯多禄回答说：「师傅，我们已整夜劳力，一无所获；但按你的话，我要下网。」\n他们这样做了，就圈住了许多鱼，网险些裂开，便招呼另一只船上的同伴来协助；他们来了，装满了两只船，以致船险些沉没。\n伯多禄见了这事，就跪伏在耶稣膝前说：「主，请离开我，因为我是个罪人！」他和他所有的一切，以及同他在一起的人，都因这鱼获的奇景惊讶不止。\n耶稣对伯多禄说：「不要害怕！从今以后，你要作捕人的渔夫了。」他们把船撑到岸上，撇下一切，就跟随了他。\n\n【圣经出处】\n路 5:1–11；玛 4:18–22\n\n【信仰启示】\n整夜无获，主一到就满载——服从主的话，即使看似不合理，也要下网。宗徒撇下一切跟随耶稣；我们的跟从也当如此彻底。","source":"思高本《路加福音》第5章","keywords":["召叫","伯多禄","鱼获","撇下一切","捕人渔夫"]},{"id":"bib-032","module":"bible","category":"新约·耶稣生平","title":"山中圣训、真福八端","content":"【故事】\n耶稣一见群众，就上了山，坐下。他的门徒来到他跟前，他就教训他们说：\n「精神贫乏的人是有福的，因为天国是他们的。\n哀恸的人是有福的，因为他们要受安慰。\n温良的人是有福的，因为他们要承受土地。\n饥渴慕义的人是有福的，因为他们要得饱饫。\n怜悯人的人是有福的，因为他们要受怜悯。\n心里洁净的人是有福的，因为他们要看见天主。\n缔造和平的人是有福的，因为他们要称为天主的子女。\n为义而受迫害的人是有福的，因为天国是他们的。」\n又说：「你们是地上的盐……你们是世界的光。」又说：「我来不是废掉法律和先知，而是成全。」耶稣的教训与经师不同，因为他教训他们正像有权威的人。\n\n【圣经出处】\n玛 5–7\n\n【信仰启示】\n真福八端颠覆了世人的价值观：福不在财富权势，而在谦卑、哀恸、温良、饥渴慕义、怜悯、洁净、和平与为义受迫害。天国赐给的，正是这些人。","source":"思高本《玛窦福音》第5-7章","keywords":["山中圣训","真福八端","盐","光","成全法律"]},{"id":"bib-033","module":"bible","category":"新约·耶稣生平","title":"伯多禄宣认「你是默西亚」","content":"【故事】\n耶稣来到了裴理伯的凯撒勒雅境内，就问门徒说：「人们说人子是谁？」\n他们回答说：「有人说是洗者若翰；有人说是厄里亚；也有人说是耶肋米亚，或先知中的一位。」\n耶稣对他们说：「你们说我是谁？」\n西满伯多禄回答说：「你是默西亚，永生天主之子。」\n耶稣回答他说：「约纳的儿子西满，你是有福的，因为不是血肉之躯启示了你，而是我在天之父。」\n\n【圣经出处】\n玛 16:13–20\n\n【信仰启示】\n伯多禄的宣认不是人的聪明，而是天父亲自启示的。认耶稣为默西亚、永生天主之子，是整个信仰的基石；愿我们也能这样承认祂。","source":"思高本《玛窦福音》第16章","keywords":["伯多禄","宣认","默西亚","天父启示","磐石"]},{"id":"bib-034","module":"bible","category":"新约·耶稣生平","title":"塔波尔山显圣容","content":"【故事】\n六天后，耶稣带着伯多禄、雅各伯和他的兄弟若望，暗暗上了一座高山。\n就在他们面前变了容貌：他的衣服发光，极其洁白，地上没有一个漂布的能漂得那样白。\n忽然，梅瑟和厄里亚向他们显现，同耶稣谈论。伯多禄就对耶稣说：「师傅，我们在这里真好！你就搭三座棚：一座为你，一座为梅瑟，一座为厄里亚。」\n他还未说完，忽然有一片光明的云彩遮盖了他们，有声音从云彩中说：「这是我的爱子，你们要听从他！」\n门徒听见，就俯伏在地，非常害怕。耶稣前来，摸他们说：「起来，不要害怕！」他们举目，看不见任何人，只见耶稣同他们在一起。\n他们下山时，耶稣吩咐他们说：「在人子从死者中复活以前，不要将这所见的告诉任何人。」\n\n【圣经出处】\n玛 17:1–8；谷 9:2–8\n\n【信仰启示】\n显圣容让门徒在十字架的苦难之前，先看见基督荣耀的面目。天父说「你们要听从他」——在一切声音之上，我们当听这位爱子的声音。","source":"思高本《玛窦福音》第17章","keywords":["显圣容","梅瑟","厄里亚","云","听从他"]},{"id":"bib-035","module":"bible","category":"新约·比喻与奇迹","title":"加纳婚宴、水变酒","content":"【故事】\n第三天，在加里肋亚的加纳有婚宴，耶稣的母亲在那里。耶稣和他的门徒也被请去赴婚宴。\n酒缺了，耶稣的母亲对他说：「他们没有酒了。」耶稣回答说：「女人，这与我，与你有什么关系？我的时辰还没有到。」\n他的母亲却对仆人说：「他无论吩咐你们什么，你们就做什么。」\n在那里有六口石缸，是为犹太人取洁礼用的，每口可盛两三桶水。耶稣对仆人说：「你们把缸倒满了水！」他们就倒满，直到缸口。\n耶稣又说：「现在舀出来，送给酒席司。」他们就送去。酒席司尝了那已成的水——他并不知道是从哪里来的，其实舀水的仆人知道——酒席司便叫新郎来，对他说：「人人都是先上好酒，等喝够了，才上次的；你却把好酒留到现在！」\n这是耶稣所行的第一个神迹，是在加里肋亚加纳行的，显示了他的荣耀，他的门徒就信从了他。\n\n【圣经出处】\n若 2:1–11\n\n【信仰启示】\n耶稣把最普通的水，变成最上好的酒。祂不废除婚宴的喜乐，反而使它更丰盛——祂来，不是夺走快乐，而是把它提升到超越的境界。","source":"思高本《若望福音》第2章","keywords":["加纳婚宴","水变酒","石缸","神迹","荣耀"]},{"id":"bib-036","module":"bible","category":"新约·比喻与奇迹","title":"治愈瘫子、自屋顶坠下","content":"【故事】\n几天后，耶稣又进了葛法翁。一听说他在屋里，许多人就都聚集来，以致门前连地方也没有了。他就给他们讲道。\n有人把一个瘫子抬到他跟前，由四个人抬着。人群拥挤，不能把他抬到耶稣跟前，就把耶稣所在的地方，拆了房顶；既拆穿了，就把那瘫痪所躺的床，系缒下去。\n耶稣一见他们的信德，就对瘫子说：「孩子，你的罪赦了。」\n有几个经师坐在那里，心中议论说：「这个人为什么这样说话？他说妄语了。除了天主一个外，谁能赦罪？」\n耶稣在心神中认透了他们这样议论，就对他们说：「你们心里为什么议论这些事？到底什么比较容易？是说『你的罪赦了』，或是说『起来，拿你的床行走罢』？但为叫你们知道人子在地上有赦罪的权柄——」\n遂对瘫子说：「我对你说：起来，拿起你的床，回家去罢！」那人立刻起来，当着众人的面前，拿起床走了。众人都惊骇，光荣天主说：「我们从来没有见过这样的事！」\n\n【圣经出处】\n谷 2:1–12\n\n【信仰启示】\n朋友为瘫子拆屋顶，这信德救了他；耶稣先赦罪，再治病——灵魂的痊愈比肉身更重要。人子在地上有赦罪的权柄。","source":"思高本《马尔谷福音》第2章","keywords":["瘫子","屋顶","赦罪","信德","行走"]},{"id":"bib-037","module":"bible","category":"新约·比喻与奇迹","title":"五饼二鱼、喂饱五千人","content":"【故事】\n耶稣出来，看见一大群群众，就对他们动了怜悯的心，因为他们好像羊没有牧人；遂开口教训他们许多事。\n天已晚了，他的门徒前来，对他说：「这地方是荒野，时候已过了。请遣散他们，好叫他们往四周的田庄去，给自己买点吃的。」\n耶稣回答说：「你们给他们吃的罢！」门徒说：「叫我们去买二百银钱的饼，给他们吃吗？」\n耶稣问：「你们有多少饼？你们去看看。」他们知道了，就说：「有五个饼，还有两条鱼。」\n耶稣吩咐他们叫众人分组，坐在青草地上；便分了组，每组一百、五十。\n耶稣拿起那五个饼和两条鱼，向天举起，感谢了，把饼剖开，递给门徒，叫他们摆在众人面前；两条鱼也分给众人。\n众人吃了，都吃饱了；把剩下的碎块装满了十二筐。那吃的男人，约有五千。\n\n【圣经出处】\n若 6:1–15；玛 14:13–21\n\n【信仰启示】\n五个饼两条鱼，在门徒手中不够分，在主手中却喂饱五千，还剩十二筐。我们微小的恩赐，只要交给主祝福，就会变成众人的饱足。","source":"思高本《若望福音》第6章","keywords":["五饼二鱼","增饼","五千人","十二筐","施舍"]},{"id":"bib-038","module":"bible","category":"新约·比喻与奇迹","title":"狂风浪中、耶稣平息风浪","content":"【故事】\n当天傍晚，耶稣对门徒说：「我们渡到对岸去罢！」他们遂离开群众，驾着船，载着耶稣过去；另有几只小船也与他同行。\n忽然起了狂风，波浪打进船里，以致船已灌满了水。耶稣在船尾靠着枕头睡着了。门徒把他叫醒，对他说：「师傅！我们要死了，你不管吗？」\n耶稣醒来，叱责了风，向海说：「静罢！沉寂罢！」风就平息了，且大大平静。\n耶稣对他们说：「你们为什么胆怯？你们还没有信德吗？」\n他们却非常害怕，彼此说：「这到底是谁？连风和海也听从他。」\n\n【圣经出处】\n谷 4:35–41\n\n【信仰启示】\n在风暴中，主看似熟睡；门徒以为被遗忘，其实主一直在船上。当生命的风浪翻涌，我们当叫醒祂——连风浪也服从祂。","source":"思高本《马尔谷福音》第4章","keywords":["风浪","平息","沉睡","害怕","信德"]},{"id":"bib-039","module":"bible","category":"新约·比喻与奇迹","title":"善心的撒玛黎雅人","content":"【故事】\n有一位法学士起来，试探耶稣说：「师傅，我当做什么，才能获得永生？」\n耶稣对他说：「法律上记载了什么？你怎样读？」他回答说：「『你应全心、全灵、全力、全智，爱上主你的天主；并爱你的近人，如你自己。』」\n耶稣对他说：「你答对了。你照样做，必得生活。」\n那人愿意显示自己有理，就对耶稣说：「到底谁是我的近人？」\n耶稣遂接话说：「有一个人从耶路撒冷下到耶里哥，正落在强盗手中。他们剥去他的衣服，把他打个半死，就走了。\n偶然，有一个司祭从那条路下来，看见了他，就绕道走了。又有一个肋未人，也来到那地方，看见了他，也绕道走了。\n但是有一个撒玛黎雅人，行路来到他那里；一见他，就动了怜悯的心，上前把他的伤口浇上油和酒，包扎好；然后扶他骑上自己的牲口，带到客栈，照看他。第二天，他拿出两个银钱，交给客栈主人说：请你照看他，不论你多花多少，我回来时必要还你。\n你以为，这三个人中，那一个是落在强盗手中的近人呢？」法学士说：「是那怜悯他的。」耶稣对他说：「你去，也照样做罢！」\n\n【圣经出处】\n路 10:25–37\n\n【信仰启示】\n近人不是同族同教的人，而是任何在我们面前有需要的人。司祭、肋未人绕道走；仇敌撒玛黎雅人却动了怜悯。爱德要付出时间、财物、风险。","source":"思高本《路加福音》第10章","keywords":["撒玛黎雅人","近人","怜悯","强盗","好撒玛黎雅"]},{"id":"bib-040","module":"bible","category":"新约·比喻与奇迹","title":"亡羊、荡钱比喻","content":"【故事】\n一切税吏和罪人，都靠近耶稣听他讲道。法利塞人和经师便窃窃私议说：「这个人接纳罪人，又同他们吃饭。」\n耶稣就对他们设了这个比喻说：\n「你们中间，谁有一百只羊而失去一只，不把这九十九只牧放在旷野，去寻找那只迷失的，直到找着他？\n既找着了，就欢喜地把他放在自己的肩上，回到家里，请来邻居和朋友，对他们说：请你们与我一同欢喜！因为我那只迷失的羊找着了。\n我告诉你们：因为这样，在天上，对于一个罪人悔改，将比对于九十九个不用悔改的义人，更高兴。」\n又说：「那个妇人有十块钱，若失落一块，岂不点上灯，打扫房屋，细细地找，直到找着？既找着了，就请来邻舍和女友说：请你们与我一同欢喜！因为我失落的那块钱，我找着了。\n我告诉你们：在天主的天使前，对一个罪人悔改，也是这样欢喜。」\n\n【圣经出处】\n路 15:1–10\n\n【信仰启示】\n一个罪人悔改，天上也要欢喜——这是罪人的好消息。九十九只羊不能代表每一个灵魂的价值；我们每一个人，都是主亲自寻找的迷失之羊。","source":"思高本《路加福音》第15章","keywords":["亡羊","荡钱","悔改","欢喜","罪人"]},{"id":"bib-041","module":"bible","category":"新约·比喻与奇迹","title":"浪子回头","content":"【故事】\n耶稣又说：「一个人有两个儿子。小儿子对父亲说：父亲，请把我应得的家业部分给我。父亲就把产业分给了他们。\n过了不多几天，小儿子把所有的一切收拾起来，往远方去了，在那里浪费资财，生活放荡。\n他耗尽了所有的一切，那地方又遇大饥荒，他便穷苦起来。遂去投靠当地的一个居民，那人打发他到田里去放猪。他恨不得拿猪吃的豆荚充饥，也没有人给他。\n他醒悟过来，说：我父亲有多少雇工，口粮丰食，我在这里饿死吗？我要起身，到我父亲那里去，对他说：父亲，我得罪了天，也得罪了你，不配再称为你的儿子；请把我当作一个雇工罢！\n他便起身，往他父亲那里去。离得还远，他父亲就看见了，便动了怜悯的心，跑上前，扑到他脖子上，连连吻他。\n儿子对他说：父亲，我得罪了天，也得罪了你，不配再称为你的儿子。父亲却对仆人说：快把那件上等袍子拿来，给她穿，给他手上戴戒指，脚上穿鞋；再把那只肥牛仔牵来宰了，我们吃喝庆祝！因为我这个儿子是死而复生，失而复得了。\n大儿子却很生气，不肯进去。父亲出来劝他。父亲对他说：孩子，你常同我在一起，凡我所有的，都是你的；只是因为你这个兄弟死而复生，失而复得，我们，应该欢喜快乐。」\n\n【圣经出处】\n路 15:11–32\n\n【信仰启示】\n浪子在猪槽中醒悟；父亲不等他说完，就跑上前拥抱亲吻。天父的心不是等着审判我们，而是在远方就等着我们回头；那只肥牛仔，早就预备好了。","source":"思高本《路加福音》第15章","keywords":["浪子","回头","父亲","拥抱","庆祝"]},{"id":"bib-042","module":"bible","category":"新约·比喻与奇迹","title":"财主与乞丐拉匝禄","content":"【故事】\n耶稣说：「有一个富家人，身穿紫袍和细麻布，天天宴乐；又有一个乞丐，名叫拉匝禄，满身疮痍，被人放在那富家人的门前，盼借富家人桌上掉下来的零碎充饥；连狗也来舔他的疮痍。\n那乞丐死了，由天使托到亚巴郎的怀中。那富家人也死了，被埋葬了。\n他在阴刑中，举目远望，看见亚巴郎和他怀中的拉匝禄，就喊说：先祖亚巴郎，怜恤我罢！打发拉匝禄用他的指头尖，蘸点水，凉一凉我的舌头，因为我在这火焰中，痛苦不堪。\n亚巴郎说：孩子，你应记念你活的时候，已享受过你的福，而拉匝禄也同样受过苦；如今他在这里受安慰，你倒是受痛苦。此外，在我们与你们之间，有一个大深渊固定着：为叫那些想从这边过到你们那里的，不能；从那边过到我们这里的，也不能。\n富家人说：先祖，既是这样，就请你打发拉匝禄到我父家去——因为我有五个兄弟——叫他告诫他们，免得他们也来到这痛苦的地方。\n亚巴郎说：他们既有梅瑟及先知，只管听从他们罢！富家人说：不，先祖亚巴郎！若有人从死者中到他们那里，他们必要悔改。\n亚巴郎对他说：若他们不听从梅瑟及先知，纵使有人从死者中复活，他们也必不信服。」\n\n【圣经出处】\n路 16:19–31\n\n【信仰启示】\n财主在生时没有留意门口的乞丐；死后才发现贫富之间有一道深渊。财富本身不是恶，但用财富而不顾近人，是危险的。不听从圣经，即使看复活奇迹也不会悔改。","source":"思高本《路加福音》第16章","keywords":["财主","拉匝禄","阴刑","深渊","财富"]},{"id":"bib-043","module":"bible","category":"新约·受难与复活","title":"荣进耶路撒冷","content":"【故事】\n他们临近耶路撒冷，到了靠近橄榄山的贝特法革和贝塔尼时，耶稣打发两个门徒，对他们说：「你们往对面的村子去，一进村，就会找到一匹驴驹拴在那里，是从来没有人骑过的。解开，牵来。\n若有人对你们说：你们做什么？你们就说：主需要它。他就立刻放它到这里来。」\n他们去了，找到一匹驴驹，拴在门外街上，就解开它。有几个站在那里的人对他们说：你们解驴驹做什么？他们就照耶稣所说的说了，那些人就让他们去了。\n他们把驴驹牵到耶稣跟前，把自己的外衣搭在上面；耶稣便骑了上去。\n许多人把外衣铺在路上，也有人从田间割下树枝来。前行后随的人喊说：\n「贺三纳！奉主名而来的，是可祝福的！\n我们先祖达味的国度，即那在主名中来的，是可祝福的！\n在高天，贺三纳！」\n\n【圣经出处】\n玛 21:1–11；谷 11:1–10\n\n【信仰启示】\n群众把耶稣当作凯旋的国王欢迎，但他们期待的是政治解放者。几天后，同一些人喊「钉他在十字架上」。真正的王是骑驴、谦和的主。","source":"思高本《玛窦福音》第21章","keywords":["荣进","驴驹","贺三纳","棕榈枝","耶路撒冷"]},{"id":"bib-044","module":"bible","category":"新约·受难与复活","title":"最后晚餐、建立圣体圣事","content":"【故事】\n到了逾越节第一天，就是应献逾越羔羊的那天，门徒前来问耶稣：「你愿意我们去哪里，给你预备逾越节吃？」\n耶稣就打发两个门徒，对他们说：「你们往城里去，会有一个人拿着一瓶水，迎面而来；你们要跟随他；他进那家，你们就对家主说：师傅问你：我同我的门徒吃逾越节晚餐的客房在哪里？他必指给你们一间布置好的宽敞楼房；你们就在那里为我们预备。」\n到了晚上，耶稣与十二宗徒一起坐席。正吃晚餐时，耶稣说：「我实实在在告诉你们：你们中有一个要出卖我。」\n他们非常忧苦，便一个一个地问他说：「主，是我吗？」\n在晚餐后，耶稣拿起饼，祝谢了，掰开，递给他们说：「这是我的身体，为你们而舍弃的。你们应行此礼，为纪念我。」\n饭后，又同样拿起杯来，说：「这杯是用我的血，为你们、为大众所立的新约。」\n\n【圣经出处】\n路 22:7–23；玛 26:26–29\n\n【信仰启示】\n在最后晚餐中，耶稣把自己作为真正的逾越羔羊赐给我们：饼酒成了祂的体血。祂说「你们应行此礼，为纪念我」——从此，弥撒就是十字架祭献的重现。","source":"思高本《路加福音》第22章","keywords":["最后晚餐","圣体","圣血","新约","纪念"]},{"id":"bib-045","module":"bible","category":"新约·受难与复活","title":"山园革责玛尼祈祷","content":"【故事】\n耶稣和门徒来到一个名叫革责玛尼的庄园。他对门徒说：「你们坐在这里，等我去那边祈祷。」\n他带了伯多禄、雅各伯和若望同去，就开始忧闷恐怖起来，对他们说：「我的心灵忧闷得要死；你们留在这里，且要醒寤！」\n他往前走了不远，就俯伏在地，祈祷说：「父啊，你是全能的，凡事都能；求你免去这杯。但不要照我所愿意的，而要照你所愿意的。」\n他回来，看见他们睡着了，就对伯多禄说：「西门，你睡吗？你不能醒寤一个时辰吗！醒寤祈祷罢，免得陷于诱惑！心神固然切愿，但肉体却软弱。」\n他又第二次去祈祷说：「我父，若这杯不能移去，非要我喝不可，就愿你的旨意承行！」\n他又回来，看见他们还是睡着，因为他们的眼睛沉重。他撇下他们，又第三次去祈祷，说了同样的话。\n有一位天使，从天上显现，加强他。他在恐怖中，祈祷更加恳切；他的汗竟如血团，滴在地上。\n他祈祷完了，来到门徒那里，对他们说：「你们还在睡？还在安息？看，时候到了，人子被交于罪人的手中了。起来，我们去罢！看，那出卖我的已临近了。」\n\n【圣经出处】\n玛 26:36–46；路 22:39–46\n\n【信仰启示】\n耶稣在山园中极度忧伤，汗血流下；他不求免去苦杯，只求承行父旨。门徒熟睡——祈祷是我们面对诱惑时的力量，不要让心神沉睡。","source":"思高本《玛窦福音》第26章、《路加福音》第22章","keywords":["山园","革责玛尼","祈祷","汗血","旨意"]},{"id":"bib-046","module":"bible","category":"新约·受难与复活","title":"耶稣受难、被钉十字架","content":"【故事】\n犹达斯用亲吻为暗号，把耶稣交给了来捕捉的军队。宗徒们都抛弃他，逃走了。\n耶稣被解到犹太首领、经师、长老面前受审；他被控告、被鞭打、被头戴茨冠、被穿上紫红袍、被吐唾沫、被以苇条打脸。\n本丢彼拉多审问他：「你是犹太人的王吗？」耶稣答：「你说的是。」彼拉多见告不出死罪来，就想释放他；但群众喊着说：「钉他十字架！钉他十字架！」\n彼拉多拿水，在众人面前洗手，说：「流这义人的血，罪不在我，你们承当罢！」群众回答说：「他的血归我们和我们的子孙身上。」\n他们把耶稣拉去，叫一个基勒乃人西满背负他的十字架。到了一个名叫哥尔哥达——「髑髅地」——的地方，他们给耶稣搀了苦调和的酒，他却没有喝。\n他们就把他钉在十字架上，又抽签分他的衣服。在他头上，安了罪状，写着：「这是犹太人的耶稣，纳匝肋人。」\n同他一起，还钉了两个强盗，一个在右，一个在左。从第六时到第九时，遍地黑暗。第九时，耶稣大声喊说：「厄里！厄里！肋玛撒巴黑塔尼！」就是说：「我的天主！我的天主！你为什么舍弃了我？」\n耶稣又大喊一声，就交付了灵魂。看，圣殿的帷幔，从上到下裂为两半；地震动，磐石裂开。\n\n【圣经出处】\n玛 27；谷 15；路 23；若 19\n\n【信仰启示】\n耶稣无罪，却为我们被钉；圣殿帷幔裂开，说明人与天主之间的隔断已除去。祂在十字架上舍弃生命，是为我们——这是天主对我们爱到极点的证明。","source":"思高本《玛窦福音》第27章、《若望福音》第19章","keywords":["受难","十字架","髑髅地","裂帷幔","赦罪"]},{"id":"bib-047","module":"bible","category":"新约·受难与复活","title":"第三日复活、「祂已不在此」","content":"【故事】\n安息日一过，玛利亚玛达肋纳、雅各伯的母亲玛利亚和撒罗默，买了香料，要来傅抹耶稣。\n一周的第一日，大清早，太阳刚出来，她们来到坟墓那里，彼此说：「谁给我们把石头从墓口滚开？」\n那石头很大，她们抬头一看，却见石头已经滚开了。她们进了坟墓，就看见一个穿白衣的少年，坐在右边，就非常惊骇。\n他对她们说：「不要惊慌！你们寻找那被钉在十字架上的纳匝肋人耶稣，他不在这裡，已复活了。来看那安放过他的地方罢！\n你们去，告诉他的门徒和伯多禄：他在你们以先往加里肋亚去，在那里你们要看见他，就如他从前告诉你们的。」\n她们就出来，从坟地逃跑，因为她们战兢又失措。她们又害怕，就什么也没有给人说。\n\n【圣经出处】\n谷 16:1–8；玛 28:1–10；路 24:1–12\n\n【信仰启示】\n第三天，坟墓空了——这是整个信仰的柱石。祂被交给了我们的罪过，为我们的复苏而复活。死亡不能拘禁祂，我们的信仰也不是虚妄。","source":"思高本《马尔谷福音》第16章","keywords":["复活","坟墓","天使","石头滚","第三日"]},{"id":"bib-048","module":"bible","category":"新约·受难与复活","title":"厄玛乌路上、分饼时认主","content":"【故事】\n就在那同一天，门徒中有两个人往一个村子去，名叫厄玛乌，离耶路撒冷约六十斯塔狄（约合十一公里）；他们正彼此谈论这一切发生的事。\n他们正谈论议论的时候，耶稣亲自走近了，与他们同行；但他们的眼睛却被蒙蔽，不认得他。\n耶稣对他们说：「你们走路彼此交谈的是什么事？」他们就站住，面带愁容。\n一个名叫克略帕的回答说：「你独自在耶路撒冷作客，不知道近来在那裡发生的事吗？」耶稣说：「什么事？」他们说：「就是关于纳匝肋人耶稣的事……我们原盼望他就是那要解救以色列的；但现在，除了这一切之外，今天已是这些事发生的第三天了。」\n耶稣对他们说：「愚蒙人哪！先知们所说的一切，你们心里相信得太迟钝了！默西亚不是必须受这些苦难，才进入他的荣耀吗？」\n他从梅瑟及众先知起，凡经书上论及他的，都给他们解释清楚了。\n临近他们要去的村子，耶稣装作还要前行。他们强留他说：「同我们一起住下罢！因为天已傍晚，日已偏西了。」\n耶稣便进去，同他们住下。当他与他们一起坐下吃饭的时候，拿起饼来，祝福了，擘开，递给他们。他们的眼睛开了，这才认出他来；但他却从他们眼前消失了。\n他们就彼此说：「当他在路上与我们谈话，给我们讲解经书的时候，我们的心不是在我们内燃烧吗？」\n\n【圣经出处】\n路 24:13–35\n\n【信仰启示】\n复活的主与伤心的门徒同行，听他们诉苦；但他们直到「擘饼」时才认出他。在圣体圣事中，我们的心也当燃烧，认出那位与我们同席的主。","source":"思高本《路加福音》第24章","keywords":["厄玛乌","同行","擘饼","认主","心燃烧"]},{"id":"bib-049","module":"bible","category":"新约·受难与复活","title":"耶稣升天","content":"【故事】\n耶稣在受难以后，又用许多凭据，向宗徒们显现为活人；四十天之久，对他们显现，讲论天主国的事。\n耶稣领他们出来，到了贝塔尼对面，就举手降福他们。降福的时候，就跟他们分离，被提升天。\n他们就叩拜了他，满心欢喜地回到耶路撒冷；常在圣殿中，称谢天主。\n\n【圣经出处】\n路 24:50–53；宗 1:1–11\n\n【信仰启示】\n耶稣升回天父那里，不是离开我们，而是要把圣神——另一个护慰者——赐下。门徒不再忧愁，反而满心欢喜——因为主虽升天，却承诺要再来。","source":"思高本《路加福音》第24章、《宗徒大事录》第1章","keywords":["升天","举手降福","贝塔尼","欢喜","再来"]},{"id":"bib-050","module":"bible","category":"新约·宗徒教会","title":"五旬节圣神降临","content":"【故事】\n五旬节一到，门徒都聚集在一处。忽然，从天上来了一阵响声，好像暴风刮来，充满了他们所在的全座房屋。\n他们又看见，好像火的舌头，分开，停在他们每个人头上。众人都充满了圣神，照圣神赐给他们的话，说起外方话来。\n那时，有虔诚的犹太人，从天下各邦国来，住在耶路撒冷。这响声一来，群众都聚集来，十分混乱，因为每人都听见他们按自己的乡土话讲话。\n他们都惊奇说：「看，这些说话的，不是都加里肋亚人吗？我们怎么每人听见他们讲我们的乡土话呢？……我们怎么听见他们用我们的话，讲论天主的奇事呢？」\n伯多禄和十一位宗徒站起来，高声向他们说：「犹太人！和一切住耶路撒冷的人！应该知道这事，要留心听我的话。诸位！这些人并不是醉汉，因为现在才是第三时辰。而是藉着约珥先知所说的：\n『在末期，天主说：我要把我的神倾注在所有的人身上。你们的儿子和女儿要要说先知话，你们的青年要见异象，你们的老年人要做异梦。』」\n听了这话，众人都心中愧疚，遂问伯多禄和其他宗徒：「我们该做什么？」伯多禄给他们说：「你们悔改，并愿你们每人，因耶稣基督的名字受洗，为得罪之赦；好领受圣神的恩惠。」\n这一天，约增添了三千人。\n\n【圣经出处】\n宗 2:1–41\n\n【信仰启示】\n圣神在五旬节如火舌降下，使胆怯的门徒成为勇敢的见证人。教会生日的奇迹：从那时起，教会要直到地极，为基督作见证。","source":"思高本《宗徒大事录》第2章","keywords":["五旬节","圣神","火舌","伯多禄","三千人"]},{"id":"bib-051","module":"bible","category":"新约·宗徒教会","title":"圣殿门口治瘫子、伯多禄首讲","content":"【故事】\n有一天，伯多禄和若望上去，到了圣殿，正值第九时，是祈祷的时辰。有一个人，由母胎中就是瘸子，被人抬来，每天放在圣殿的门口，那称为「美门」的，好向进圣殿的人求施舍。\n他看见伯多禄和若望要进圣殿，就求他们施舍。伯多禄和若望定睛看他，说：「你看我们罢！」他就注目看他们，指望能从他们得点什么。\n伯多禄说：「金银，我没有；但把我所有的给你：因纳匝肋人耶稣基督的名字，你起来行走罢！」\n遂挽着他的右手，扶他起来；他的脚和踝骨，立刻健壮起来。他跳了起来，站着，并行走；遂同他们进了圣殿，行走、跳跃、赞美天主。\n百姓见他行走并赞美天主，又认出他就是那坐在圣殿美门讨施舍的，就因所发生的事，充满惊奇。\n这人拉住伯多禄和若望，百姓就一齐跑到他们那里，即所谓「撒罗满廊下」，十分惊奇。\n伯多禄一见，就向百姓说：「以色列人！为什么对这事惊奇？为什么注视我们，好像我们是因自己的能力和虔诚，叫这人行走？」\n\n【圣经出处】\n宗 3:1–26\n\n【信仰启示】\n「金银我没有，但把我所有的给你」——真正的财富是基督的名。没有钱不要紧，只要有主的名、主的信德，就能行出奇迹。","source":"思高本《宗徒大事录》第3章","keywords":["圣殿美门","瘫子","伯多禄","若望","耶稣的名"]},{"id":"bib-052","module":"bible","category":"新约·宗徒教会","title":"斯德望殉道","content":"【故事】\n那时，门徒增多，有说希腊语的犹太人，反对希伯来籍的犹太人，因为在每日的救济事务上，忽略了他们的寡妇。\n十二宗徒遂召集门徒全体说：「我们抛弃天主的话，去管饭食，是不合宜的。所以，弟兄们，当从你们中选出有好名望、充满圣神和智慧的人，我们好派他们管理这事。」\n他们就选了斯德望，他是充满信德和圣神的人；还有斐理伯、普罗苛洛……等七人。\n斯德望充满恩宠和能力，在百姓中行大奇迹和大征兆。\n有称「自由人」会堂的一些人，出来同斯德望辩论；但他们不能抵抗他的智慧和他藉以说话的圣神。\n他们就挑唆一些人来，说：「我们听见他说侮辱梅瑟和侮辱天主的话。」就把他抓到公议会。\n斯德望在长篇见证后，众人都咬牙切齿地怒视他。他却被圣神充满，定睛向天，见天主的光荣，和站在天主右边的耶稣，就说：「看！我见天开了，并见人子站在天主右边。」\n众人都大声喊叫，掩着耳朵，一致向他猛扑；把他赶出城外，就用石头砸。见证人们把衣服放在一个年轻人名叫扫禄的脚前。\n他们用石头砸斯德望的时候，他呼吁说：「主耶稣，接我的灵魂去！」又跪下大声喊说：「主，不要把这罪归于他们！」说了这话，就死了。扫禄也赞同杀他。\n\n【圣经出处】\n宗 6–7\n\n【信仰启示】\n斯德望是教会第一位殉道者；他临死学基督的样子，为杀人者祈祷。殉道者的血是教会的种子——他饶恕的祷告，正是后来扫禄归化的种子。","source":"思高本《宗徒大事录》第6-7章","keywords":["斯德望","殉道","七执事","石头","饶恕"]},{"id":"bib-053","module":"bible","category":"新约·宗徒教会","title":"扫禄在大马士革归化","content":"【故事】\n扫禄仍然向主的门徒口吐威吓、凶杀的话，去见大司祭，求他发文书给大马士革的会堂，如果找到这道途的男女，就捆绑起来，解到耶路撒冷。\n他前行，快到大马士革的时候，忽然有一道光，从天上射下，四面照着他。他就跌到地上，听见有声音向他说：「扫禄，扫禄！你为什么迫害我？」\n他说：「主，你是谁？」主答说：「我就是你所迫害的耶稣。起来，进城去，必有人告诉你，你当做什么。」\n同行的人，站在那里，哑口无言；听见声音，却看不见人。扫禄从地上起来，睁开眼，却什么也看不见。他们就拉着他的手，领他进了大马士革。\n三天看不见，也不吃，也不喝。\n在大马士革有个门徒，名叫阿纳尼雅；主在异象中对他说：「阿纳尼雅！」他答说：「主，我在这里。」主对他说：「你起来，往那叫『直街』的地方去，在犹大家里，找一个名叫扫禄的塔尔索人；看，他正在祈祷。」\n阿纳尼雅却答说：「主，我听许多人说：这人在耶路撒冷，对你的圣徒做了多少坏事；他在这里也有从司祭长得来的权柄，捆绑一切呼你名的人。」\n主对他说：「你去罢！这人是我拣选的器皿，为把我的名字，带到外邦人和君王，并以色列子民面前。」\n\n【圣经出处】\n宗 9:1–19\n\n【信仰启示】\n扫禄迫害教会，其实是在迫害基督——「你为什么迫害我？」没有人是不可悔改的。主不放弃敌人；祂拣选迫害者，成为祂向外邦人传福音的器皿。","source":"思高本《宗徒大事录》第9章","keywords":["扫禄","保禄","大马士革","归化","阿纳尼雅"]},{"id":"bib-054","module":"bible","category":"新约·宗徒教会","title":"默示录异象、新天新地","content":"【故事】\n被流放到帕特摩岛的若望，在主日，被圣神感动，听见背后有大声说：「你所看见的，写在书上，然后寄给亚细亚的教会。」\n我看见了，看！有一道虹围绕着宝座；坐宝座的，外观好似碧玉和红玛瑙。有二十四位长老，身穿白衣，头戴金冠，坐在宝座周围的宝座上。\n我又看见，在宝座和四活物中间，并在长老中间，有一只羔羊，像是被宰杀过的，有七个角和七只眼——就是被派到普天下的天主七神。\n他们唱新歌说：「你堪当接受书卷，堪当开启书卷的印，因为你曾被宰杀，曾用自己的血，为天主从各支派、各民族、各邦国、各异民中，赎出我们，使我们成为国度，成为司祭，事奉我们的天主。」\n我又看见了一个新天新地，因为先前的天和先前的地已过去了，海也不再有了。\n我又看见了那新耶路撒冷，从天上，由天主那里降下来，预备好了，就如一位为自己丈夫装扮的新娘。\n我听见由宝座那里有一大声音说：「这就是天主与人的居所！他要与他们一同居住，他们要作他的民族；天主本身要与他们同在，作他们的天主。\n他要擦去他们眼上的一切泪痕；以后再也没有死亡，再也没有悲伤，没有哀号，没有痛楚，因为先前的事都过去了。」\n那坐在宝座上的说：「看，我更新一切！」又说：「你写下来，因为这些话是真实可信的。」\n\n【圣经出处】\n默 1:9–20；5；21–22\n\n【信仰启示】\n殉道羔羊是历史的主宰；最后的胜利是新天新地——在那里，没有死亡、悲伤、哀号、痛楚，天主亲自擦去我们的眼泪。这是我们信仰最后的盼望。","source":"思高本《若望默示录》第1、5、21-22章","keywords":["默示录","新耶路撒冷","羔羊","新天新地","眼泪"]}],"liturgy_prayers":[{"id":"lit-001","module":"liturgy","category":"七件圣事","title":"圣洗圣事","content":"【名称】圣洗圣事（洗礼）。\n【标记/形式】由施洗者以水三次注于领洗者头上，同时念：「某某，我因父、及子、及圣神之名，给你施洗。」水洗与呼号天主圣三之名，是此圣事的有形标记。\n【效果/圣宠】赦免原罪及领洗前所犯本罪；赋与成义的圣宠，使人生出超性生命，成为天主的子女、基督的兄弟姊妹、教会的肢体；并在灵魂上刻下永不磨灭的「神印」，故圣洗只可领一次。\n【施行者】正常由主教或司铎施行；拉丁教会中执事亦可。在紧急时（如临终），任何人——即使尚未领洗者——只要怀有「愿做天主教会所做的事」的意向，奉天主圣三之名施洗，皆为有效。\n【教理依据】《天主教教理》1213-1284条；谷16:16；若3:5；宗2:38。","source":"《天主教教理》1213-1284条；《要理问答》卷三·圣洗圣事（天主教在线 cccn.org）","keywords":["圣洗","洗礼","入门圣事","重生","神印"]},{"id":"lit-002","module":"liturgy","category":"七件圣事","title":"坚振圣事","content":"【名称】坚振圣事（坚振，亦称智慧之门/chrismation）。\n【标记/形式】主教（或受其特许的司铎）将手覆于领受者头上，以圣油（圣 Chrism）傅抹其额，并划十字，念：「请借此圣印，赐下天主圣神。」\n【效果/圣宠】巩固圣洗所赋的恩宠，特别赋与圣神的力量，使信友更紧密地与基督结合，勇敢地为基督作证，做其活的见证人；与圣洗、圣体同列为「基督徒入门三圣事」。\n【施行者】正常为主教（象征与宗徒传承的联系）；在教会法定情况下，合格司铎亦可施行。\n【教理依据】《天主教教理》1285-1321条；宗8:14-17；依11:2-3。","source":"《天主教教理》1285-1321条；梵蒂冈广播电台《要理》第7课·坚振圣事","keywords":["坚振","坚振圣事","圣神","傅油","入门圣事"]},{"id":"lit-003","module":"liturgy","category":"七件圣事","title":"圣体圣事","content":"【名称】圣体圣事（感恩圣事、圣餐、Eucharist）。\n【标记/形式】在弥撒（感恩祭）中，司铎以基督所立的话与意图，祝圣面饼与葡萄酒：面饼变为基督的身体，葡萄酒变为基督的宝血。信友领受（圣体），即领受基督本身。\n【效果/圣宠】与基督深切结合；滋养、坚固爱德；赦免轻罪；加强教会的共融；预尝天国荣福。圣体是「圣事中的圣事」，其他六件圣事均指向它。\n【施行者】惟有经由圣秩圣事而成为主教或司铎者，方能祝圣圣体圣血、举行感恩祭。\n【教理依据】《天主教教理》1322-1419条；若6:32-58；格前11:23-26。","source":"《天主教教理》1322-1419条；《天主教教理简编》第二部分·圣体圣事","keywords":["圣体","圣餐","感恩祭","弥撒","质变"]},{"id":"lit-004","module":"liturgy","category":"七件圣事","title":"忏悔（和好）圣事","content":"【名称】忏悔圣事（告解、忏悔与和好圣事、修和圣事）。\n【标记/形式】由信友①痛悔（真心恨己罪、定改）、②告明（向司铎告明领洗后所犯的重大罪过）、③补赎（按司铎指示做善功）；司铎以基督之名宣赦：「我赦免你的一切罪过，因父、及子、及圣神之名。」\n【效果/圣宠】赦免领洗后所犯、且未告明的死罪；恢复（或重燃）与天主的恩宠友谊；与教会重修旧好；获得内心平安与平安。\n【施行者】主教或司铎（听告解）。\n【教理依据】《天主教教理》1420-1498条；若20:22-23；路15:11-32。","source":"《天主教教理》1420-1498条；天主教在线《天主教教理》第二章·忏悔与和好圣事","keywords":["告解","忏悔","和好","修和","告明","赦免"]},{"id":"lit-005","module":"liturgy","category":"七件圣事","title":"病人傅油圣事","content":"【名称】病人傅油圣事（旧称终傅圣事）。\n【标记/形式】由司铎以圣油（病人油）傅抹病重或年老信友的额头及双手，并行覆手祈祷。\n【效果/圣宠】赐予病者力量、慰藉与平安；赦免其罪；坚强其对抗病痛与临终的软弱；若情况需要，亦为身体的康复奠基。此圣事为病重者而非仅临终者。\n【施行者】主教或司铎。\n【教理依据】《天主教教理》1499-1532条；雅5:14-15。","source":"《天主教教理》1499-1532条；《要理问答》卷三·病人傅油","keywords":["病人傅油","终傅","病人","傅油","慰藉"]},{"id":"lit-006","module":"liturgy","category":"七件圣事","title":"圣秩圣事","content":"【名称】圣秩圣事（神品圣事）。\n【标记/形式】主礼主教向领受者行覆手礼，并行祝圣祈祷（必要时辅以傅油），将圣秩圣事印于灵魂。\n【效果/圣宠】赋与圣化、训导、治理三项神权；印刻永不磨灭的神印，使人分享基督司祭的职务；传承宗徒的使命。\n【品级】圣秩圣事分三级：主教、司铎（神父）、执事。\n【施行者】祝圣主教、司铎、执事者，为主教。\n【教理依据】《天主教教理》1536-1600条；弟前3:1-13；若20:21-23。","source":"《天主教教理》1536-1600条；天主教上海教区《圣秩圣事》（教理1533-1600）","keywords":["圣秩","神品","主教","神父","执事","圣秩圣事"]},{"id":"lit-007","module":"liturgy","category":"七件圣事","title":"婚姻圣事","content":"【名称】婚姻圣事（婚配）。\n【标记/形式】两位领洗男女在教会内公开互表同意（「我愿意娶/嫁你」），由合法圣职人员及见证人在场；此互相承诺即圣事的有形标记。\n【效果/圣宠】赋予夫妻彼此忠贞、恩爱、彼此扶助、生育教养子女的圣宠；象征基督与教会之间不可分离的结合（弗5:32）。有效婚姻在教会面前不可拆散。\n【施行者】婚姻双方互为本圣事的施行者；司铎（或执事）为教会的法定见证人。\n【教理依据】《天主教教理》1601-1666条；创2:24；谷10:6-9；弗5:25-32。","source":"《天主教教理》1601-1666条；《要理问答》卷三·婚配圣事","keywords":["婚姻","婚配","夫妻","家庭","婚姻圣事"]},{"id":"lit-008","module":"liturgy","category":"弥撒与礼仪","title":"弥撒（感恩祭）总论","content":"弥撒，又称感恩祭（神圣感恩祭、圣祭），是教会礼仪生活的顶峰与泉源。它不是一套简单的聚会，而是十字架祭献在历史中的重演（纪念）：基督透过司铎，将自己无血地、以祭宴的方式，再次呈于父前。\n结构上，弥撒由五部分构成：\n一、进堂式（开始礼仪）；二、圣道礼仪；三、圣祭礼仪（感恩祭宴）；四、领圣体礼；五、礼成式。\n其中圣道礼仪与圣祭礼仪为「两大组成部分」，进堂式为预备，领圣体礼与礼成式为结束。\n【信仰意义】弥撒是天主子民聚集、聆听圣言、重演十字架祭献、领受基督体血、并被派遣到世上去作证的完整行动。\n【依据】《天主教教理》1346-1347条；香港教区礼仪委员会《现代弥撒图解》。","source":"《天主教教理》1346-1347条；天主教香港教区礼仪委员会《现代弥撒图解》PDF","keywords":["弥撒","感恩祭","礼仪","祭献","结构"]},{"id":"lit-009","module":"liturgy","category":"弥撒与礼仪","title":"进堂式（开始礼仪）","content":"进堂式是弥撒的开场，目的是使聚集的信友心神合一、准备举行感恩祭。\n主要环节：\n1. 进堂咏：主祭与辅礼者列队自后方走向祭台，咏唱进堂曲。\n2. 致候词：主祭划十字圣号并向信友致候：「愿全能的天主父、及子、及圣神，与你们同在。」\n3. 忏悔礼（忏悔词/垂怜经）：全体省察己罪，念「我向全能的天主……」，并呼求「上主，求你垂怜」。\n4. 光荣颂（将临期、四旬期外唱）：赞美天主。\n5. 集祷经：主祭代表全体向天父祈祷。\n【含义】进入圣堂即进入基督的集会；认罪与祈求，是为以纯洁之心参加圣祭作准备。","source":"《天主教教理》1348-1353条；香港教区礼仪委员会《开始仪式（进堂式）》PDF","keywords":["进堂式","开始礼","忏悔礼","垂怜经","集祷经"]},{"id":"lit-010","module":"liturgy","category":"弥撒与礼仪","title":"圣道礼仪","content":"圣道礼仪是弥撒中「聆听天主圣言」的部分。\n主要环节：\n1. 读经一（多取自旧约）与答唱咏：天主在历史中对选民说话。\n2. 读经二（多取自新宗徒书信）：宗徒留给教会的训导。\n3. 福音前欢呼（阿肋路亚，四旬期用其他歌颂）。\n4. 福音：主祭（或执事）恭读玛窦、马尔谷、路加、若望福音——基督亲自在席间说话。\n5. 讲道：由主祭或执事解释当日圣经，使之与生活相连。\n6. 信经（尼西亚信经）：全体以信仰回应所听的圣言。\n7. 信友祷词（为普世教会、世界、各类疾苦等祈祷）。\n【含义】信仰来自听道；在领圣体之前，先聆听并默想基督的话。","source":"《天主教教理》1354-1373条；香港天主教教友总会《感恩祭（弥撒）》","keywords":["圣道礼仪","读经","福音","讲道","信经","信友祷词"]},{"id":"lit-011","module":"liturgy","category":"弥撒与礼仪","title":"圣祭礼仪（感恩祭宴）","content":"圣祭礼仪是弥撒的核心，重演十字架上基督的一次而永远的祭献。\n主要环节：\n1. 预备礼品：信友献上饼、酒（及捐款），主祭将之置于祭台。\n2. 祝圣（成圣体圣血）：主祭伸手于礼品上呼求圣神（Epiclesis），继而复述基督在最后晚餐所行之言：「这是我的身体……这是我立约的血……」面饼与葡萄酒的实体遂转变为基督的体血（质变说）。\n3. 纪念与献祭：教会将基督的一次祭献呈于父前。\n4. 呼求与转求：为教宗、主教、教会、生者死者及普世祈祷。\n5. 圣三光荣颂（Doxology）：「万有归于你，直至永远。」全体答「阿们」。\n【含义】十字架的祭献不是被重复，而是在圣神内被「纪念」、临现于今日的祭宴中。","source":"《天主教教理》1355-1377条；香港教区礼仪委员会《感恩祭宴（圣祭礼）》PDF","keywords":["圣祭礼仪","感恩经","祝圣","成圣体","质变","Epiclesis"]},{"id":"lit-012","module":"liturgy","category":"弥撒与礼仪","title":"领圣体礼","content":"领圣体礼是信友亲自领受所祝圣的基督体血，与基督及整个教会共融。\n主要环节：\n1. 天主经（主祷文）：全体共同诵念。\n2. 平安礼：彼此互祝平安，象征在领圣体前与天人与人和好。\n3. 羔羊经（Agnus Dei）：「除免世罪的天主羔羊，求你垂怜我们。」\n4. 领圣体：信友依次到祭台前，领受主礼所递上的圣体（或圣血），答「阿们」——即「我信、我愿」。\n5. 领圣体后默祷与祷文。\n【合法领受条件】须为领洗的天主教友、处于恩宠状态（未陷死罪）、遵守守斋规定（领圣体前一小时除食粮药品外禁食）。","source":"《天主教教理》1384-1405条；香港教区礼仪委员会《感恩祭宴（圣祭礼）》PDF","keywords":["领圣体","圣体","天主经","平安礼","羔羊经","共融"]},{"id":"lit-013","module":"liturgy","category":"弥撒与礼仪","title":"礼成式","content":"礼成式是弥撒的结束部分。\n主要环节：\n1. 主祭简短结语（提示堂区事务等）。\n2. 祝福：主祭因父、及子、及圣神之名，向信友祝福，并划十字圣号。\n3. 遣散：主祭说：「弥撒礼成，你们去罢。」（Ite, missa est）全体答：「感谢天主。」\n【含义】「礼成」不是结束，而是派遣——信友蒙祝福后，把在感恩祭中所领的基督，带到家庭、职业与社会中去，做福音的见证人。\n【依据】《天主教教理》1347条；香港教区礼仪委员会《礼成仪式》。","source":"《天主教教理》1347条；香港教区礼仪委员会《开始仪式、感恩祭宴及礼成仪式》PDF","keywords":["礼成式","遣散","祝福","弥撒礼成"]},{"id":"lit-014","module":"liturgy","category":"弥撒与礼仪","title":"圣体真实临在与质变说","content":"天主教坚信：在圣体圣事中，饼与酒的全部实体（本体），经祝圣后已转变为我们主耶稣基督的身体、血、灵魂及天主性；而饼酒的「外貌」（味道、形状、颜色等偶性）仍存留。此教义称为「质变说」（Transubstantiation）。\n因此：\n1. 临在是「真实、实在、实体性」的——不是象征、不是纪念物，而是基督本人。\n2. 基督——完整的、全体的——临在于领圣体的每一小片饼、每一滴酒中。\n3. 教会以朝拜的礼仪（圣体降福、圣体敬礼）恭敬圣体，因为其中临在的是复活的基督。\n【依据】《天主教教理》1373-1377、1415-1419条；若6:51-56。","source":"《天主教教理》1373-1377、1415-1419条；天主教教理简编·圣体圣事","keywords":["圣体临在","质变说","Transubstantiation","朝拜圣体","真实临在"]},{"id":"lit-015","module":"liturgy","category":"教会节期","title":"礼仪年总论","content":"礼仪年（Liturgical Year）是教会以年度周期，重演并分享基督由降生、受难、复活、升天，直到圣神降临的整个救世奥迹。它并非单纯的历史纪念，而是使这救恩奥迹临在于每一代信友。\n礼仪年分为五大时期：将临期、圣诞期、四旬期、复活期、常年期。\n礼仪器服颜色（简易）：\n- 紫色：将临期、四旬期——忏悔、期待。\n- 白色：圣诞期、复活期——喜乐、光荣。\n- 红色：圣神降临、基督苦难、殉道者瞻礼——圣神与牺牲的血。\n- 绿色：常年期——信仰成长、希望。\n- 玫瑰色：将临期第三主日（Gaudete）、四旬期第四主日（Laetare）—— minor 喜乐。\n【依据】《天主教教理》1168-1173条；香港教区礼仪委员会《教会礼仪年》。","source":"《天主教教理》1168-1173条；天主教香港教区礼仪委员会《教会礼仪年》","keywords":["礼仪年","节期","礼仪器色","将临期","复活期"]},{"id":"lit-016","module":"liturgy","category":"教会节期","title":"将临期","content":"将临期（Advent）是礼仪年的开始，为圣诞节作准备。\n【时间】圣诞节前的四个主日（约自11月30日前后的主日起，至12月24日止）。\n【主题】双重期待：一方面纪念基督第一次降临——婴孩降生于白冷；另一方面期待他第二次光荣降临——世界末日。\n【礼仪特色】仪服紫色（忏悔、期待）；不唱「光荣颂」；祭台不摆鲜花；堂中常立将临花环（四枝蜡烛，逐主日点燃）。\n【精神】警醒、悔改、期待。\n【依据】《天主教教理》1171条；香港教区礼仪委员会《教会礼仪年》。","source":"《天主教教理》1171条；香港教区礼仪委员会《教会礼仪年》","keywords":["将临期","Advent","圣诞节前","将临花环","紫色"]},{"id":"lit-017","module":"liturgy","category":"教会节期","title":"圣诞期","content":"圣诞期（Christmas Season）庆祝耶稣基督——天主之子——降生为人的奥迹。\n【时间】自12月25日圣诞节开始，至主显节后之主日（主受洗节）止，约两周。\n【主要瞻礼】圣诞节（12月25日，子时、黎明、天明、日间弥撒）；圣家节；天主之母节（1月1日）；主显节（1月6日，或其后主日，纪念耶稣显示于东方贤士）；主受洗节。\n【礼仪特色】仪服白色（喜乐、光明）；唱「光荣颂」；祭台饰鲜花；堂中设圣诞马槽。\n【精神】庆祝天主与人同在（Emmanuel）。\n【依据】《天主教教理》1171条；香港教区礼仪委员会《教会礼仪年》。","source":"《天主教教理》1171条；香港教区礼仪委员会《教会礼仪年》","keywords":["圣诞期","圣诞节","12月25日","主显节","白色"]},{"id":"lit-018","module":"liturgy","category":"教会节期","title":"四旬期","content":"四旬期（Lent）为复活节作准备，是教会悔改、斋戒、补赎的时期。\n【时间】自圣灰礼仪星期三（Ash Wednesday）起，至复活节前的圣周六晚间，共约40天（主日不计入斋戒）。\n【主要环节】圣灰礼仪（在额上抹灰，念「记着，你原为灰土，死后仍要归于灰土」）；圣周（圣枝主日、圣周四——最后晚餐、圣周五——耶稣受难、圣周六——守夜等待复活）。\n【礼仪特色】仪服紫色；不唱「阿肋路亚」与「光荣颂」；信友守大小斋（年满18至59岁者，圣周五及圣灰礼仪日守大斋；全年星期五小斋，不食热血动物肉）。\n【精神】悔改、克己、布施、祈祷。\n【依据】《天主教教理》1172、1434条；香港教区礼仪委员会《教会礼仪年》。","source":"《天主教教理》1172、1434条；香港教区礼仪委员会《教会礼仪年》","keywords":["四旬期","Lent","圣灰礼仪","圣周","斋戒","紫色"]},{"id":"lit-019","module":"liturgy","category":"教会节期","title":"复活期","content":"复活期（Easter Season）庆祝基督由死者中复活，是礼仪年的顶峰。\n【时间】自复活节前夕（圣周六守夜礼）开始，共50天，直至圣神降临节（五旬节）。\n【核心日期】\n- 复活节：春分（3月21日）后第一次月圆后的第一个主日（落在3月22日至4月25日之间）。\n- 圣神降临节（五旬节）：复活节后第50天，圣神降临于圣母与宗徒身上，教会诞生。\n【礼仪特色】仪服白色；天天唱「阿肋路亚」；复活守夜礼祝福新火、逾越蜡烛、诵读经、祝圣圣水、入堂式。\n【精神】基督复活——信仰的基石；新生命、新创造。\n【依据】《天主教教理》1169-1170条；香港教区礼仪委员会《教会礼仪年》。","source":"《天主教教理》1169-1170条；香港教区礼仪委员会《教会礼仪年》","keywords":["复活期","复活节","圣神降临节","五旬节","白色","阿肋路亚"]},{"id":"lit-020","module":"liturgy","category":"教会节期","title":"常年期","content":"常年期（Ordinary Time）并非「平常」之意，而是「按次序」纪念基督救世工程与训导的时期。\n【时间】分为两段：\n1. 前段：自主受洗节后的星期一，至圣灰礼仪日前的星期二。\n2. 后段：自圣神降临节后的星期一，至将临期第一主日（即礼仪年终）。\n【时长】全年约33至34主日，是礼仪年最长的一段。\n【礼仪特色】仪服绿色（象征信仰成长、永恒希望）；福音按年循环读玛窦、马尔谷、路加（A/B/C三年）。\n【精神】在日常生活中活出基督的福音。\n【依据】《天主教教理》1173条；香港教区礼仪委员会《教会礼仪年》。","source":"《天主教教理》1173条；香港教区礼仪委员会《教会礼仪年》","keywords":["常年期","Ordinary Time","绿色","福音循环"]},{"id":"lit-021","module":"liturgy","category":"教会节期","title":"主要瞻礼日期一览","content":"【圣诞节】12月25日——耶稣基督诞生。\n【天主之母节】1月1日——尊玛利亚为天主之母。\n【主显节】1月6日（或其后主日）——耶稣显示于东方贤士。\n【圣灰礼仪日】复活节前约40天的星期三——四旬期开始。\n【复活节】春分（3月21日）后第一次月圆后的第一个主日（3月22日—4月25日间）——耶稣复活。\n【圣神降临节（五旬节）】复活节后第50天——圣神降临，教会诞生。\n【天主圣三节】圣神降临节后的第一个主日——敬拜天主三位一体。\n【基督圣体圣血节】圣三节後星期四（或其后主日）——恭敬圣体。\n【圣母升天节】8月15日——蒙天主救赎，灵魂肉身蒙召升天。\n【诸圣节】11月1日——致敬历代诸圣。\n【追思已亡节】11月2日——为炼灵中已故信友祈祷。\n【将临期第一主日】最靠近11月30日的主日——新礼仪年开始。\n【依据】香港教区礼仪委员会《罗马教会礼仪年公用日历》；《天主教教理》1168-1173条。","source":"香港教区礼仪委员会《罗马教会礼仪年公用日历》；《天主教教理》1168-1173条","keywords":["瞻礼","节日","圣诞节","复活节","圣母升天","圣神降临"]},{"id":"lit-022","module":"liturgy","category":"常用祈祷经文","title":"天主经（主祷文）","content":"【出处】基督在山中圣训亲自传授的祈祷（玛6:9-13；路11:2-4）。\n【白话文全文】\n我们的天父，愿祢的名受显扬；愿祢的国来临；愿祢的旨意奉行在人间，如同在天上。求祢今天赏给我们日用的食粮；求祢宽恕我们的罪过，如同我们宽恕别人一样；不要让我们陷于诱惑；但救我们免于凶恶。阿们。\n【文言文（传统本）】\n在天我等父者，我等愿尔名见圣；尔国临格；尔旨承行于地，如于天焉。我等望尔，今日予我，我日用粮；尔免我债，如我亦免负我债者；又不许我陷于诱感，乃救我于凶恶。阿们。","source":"《天主教教理》2777-2865条；思高本《玛窦福音》6:9-13；台湾主教团/北京西什库《常用经文》","keywords":["天主经","主祷文","我们的天父","玛窦福音6章"]},{"id":"lit-023","module":"liturgy","category":"常用祈祷经文","title":"圣母经","content":"【出处】综合路加福音1:28天使加俾额尔的问候与1:42依撒伯尔的赞美；后半段为教会传统祈求。\n【白话文全文】\n万福玛利亚，妳充满圣宠，主与妳同在。妳在妇女中受赞颂，妳的亲子耶稣同受赞颂。天主圣母玛利亚，求妳现在和我们临终时，为我们罪人祈求天主。阿们。\n【文言文（传统本）】\n万福玛利亚！满被圣宠者，主与尔偕焉；女中尔为赞美，尔胎子耶稣并为赞美。天主圣母玛利亚，为我等罪人，今祈天主，及我等死候。阿们。","source":"《天主教教理》2676-2677条；思高本《路加福音》1:28、42；台湾主教团/北京西什库《常用经文》","keywords":["圣母经","万福玛利亚","Hail Mary","路加福音1章"]},{"id":"lit-024","module":"liturgy","category":"常用祈祷经文","title":"圣三光荣经","content":"【白话文全文】\n愿光荣归于父、及子、及圣神，起初如何，今日亦然，直到永远。阿们。\n【文言文（传统本）】\n天主圣父、及圣子、及圣神，吾愿其获光荣；厥初如何，今兹亦然，以迨永远及世之世。阿们。\n【用途】常用于玫瑰经每端后、感恩经结束、日课光荣颂。","source":"《天主教教理》2622、2641条；台湾主教团《天主教常用经文》；天主教在线《要理问答·常用经文》","keywords":["光荣经","圣三光荣颂","Glory Be","圣三"]},{"id":"lit-025","module":"liturgy","category":"常用祈祷经文","title":"宗徒信经","content":"宗徒信经（又称宗徒使徒信经）为西方教会古老的洗礼信经，传统上认为出自十二宗徒。\n【全文】\n我信全能的天主父，天地万物的创造者。我信父的唯一子，我们的主耶稣基督。我信祂因圣神降孕，由童贞玛利亚诞生。我信祂在比拉多执政时蒙难，被钉在十字架上，死而安葬。我信祂下降阴府，第三日从死者中复活。我信祂升了天，坐在全能天主父的右边。我信祂要从天降来，审判生者死者。我信圣神。我信圣而公教会，诸圣的相通。我信罪过的赦免。我信肉身的复活。我信永恒的生命。阿们。","source":"《天主教教理》194-197条；台湾主教团《天主教常用经文》；天主教上海教区《宗徒信经》","keywords":["宗徒信经","使徒信经","信经","Apostles Creed"]},{"id":"lit-026","module":"liturgy","category":"常用祈祷经文","title":"尼西亚信经（主日弥撒诵念）","content":"尼西亚-君士坦丁堡信经，于公元325年尼西亚公会议及381年君士坦丁堡公会议定订，主日及隆重庆节弥撒中全体诵念。\n【全文】\n我信唯一的天主，全能的圣父，天地万物无论有形无形，都是祂所创造的。我信唯一的主、耶稣基督、天主的独生子。祂在万世之前，由圣父所生。祂是出自天主的天主，出自光明的光明，出自真天主的真天主。祂是圣父所生，而非圣父所造，与圣父同性同体，万物是藉着祂而造成的。祂为了我们人类，并为了我们的得救，从天降下。祂因圣神，由童贞玛利亚取得肉躯，而成为人。祂在般雀比拉多执政时，为我们被钉在十字架上，受难而被埋葬。祂正如圣经所载，第三日复活了。祂升了天，坐在圣父的右边。祂还要光荣地降来，审判生者死者。祂的神国万世无疆。我信圣神，祂是主及赋与生命者，由圣父圣子所共发。祂和圣父圣子，同受钦崇，同享光荣。祂曾藉先知们发言。我信唯一、至圣、至公、从宗徒传下来的教会。我承认赦罪的圣洗，只有一个。我期待死人的复活，及来世的生命。阿们。","source":"《天主教教理》198-202条；台湾主教团《天主教常用经文》；天主教在线《尼西亚信经》","keywords":["尼西亚信经","信经","Credo","三位一体","主日弥撒"]},{"id":"lit-027","module":"liturgy","category":"常用祈祷经文","title":"忏悔词（悔罪经 / Confiteor）","content":"弥撒开始礼中，全体同诵的忏悔经（《感恩祭典》第一式）。\n【全文】\n我向全能的天主和各位兄弟姊妹，承认我在思、言、行为上的过失。（捶胸）我罪、我罪、我的重罪。为此，恳请终身童贞圣母玛利亚、天使、圣人，和你们各位兄弟姊妹，为我祈求上主、我们的天主。\n【答唱】愿全能的天主垂怜我们，赦免我们的罪，使我们得到永生。阿们。\n【说明】「我罪、我罪、我的重罪」对应拉丁语 mea culpa, mea culpa, mea maxima culpa；念此句时信友以右手轻捶胸前，表示痛悔。\n【个人痛悔经（告解后常用）】\n我的天主，我全心痛悔得罪了祢；我痛恨我一切罪过，因为我不但怕应得的罪罚，尤其因为我得罪了祢——无限美善、堪享一切爱情的天主。我决志依靠祢的圣宠，痛改前非，再也不犯罪过，并避免犯罪的机会。阿们。","source":"《感恩祭典》第一式·忏悔礼；香港教区礼仪委员会《开始仪式》PDF；天主教北京教区西什库《晚课经文》","keywords":["悔罪经","忏悔词","Confiteor","痛悔经","弥撒开始"]},{"id":"lit-028","module":"liturgy","category":"常用祈祷经文","title":"饭前经与饭后经","content":"【饭前经】\n万善的天主，我们的主，求你降福我们，及我们所将领受的你的恩赐，因我们的主基督。阿们。\n（传统文：天主降福我等，暨所将受于主普施之恩，因主基督。亚孟。）\n【饭后经】\n全能的天主，我们感谢你，因你一切的恩赐，因我们的主基督。阿们。\n（常加：并求你使已亡信众，赖天主的仁慈，安息于永久的平安。阿们。）\n【意义】用饭前后举手划十字、短祷，是把日常饮食奉献于天主，感谢养育之恩，养成凡事谢恩的习惯（得6:6；格前10:31）。","source":"天主教在线《要理问答·常用经文》；传统拉丁 Benedic Domine / Agimus tibi gratias 中文译本","keywords":["饭前经","饭后经","谢饭","感恩","短祷"]},{"id":"lit-029","module":"liturgy","category":"常用祈祷经文","title":"玫瑰经（结构与五端奥迹）","content":"玫瑰经（Rosary）是以圣母为引导、默想基督一生奥迹的祈祷。\n【结构】\n1. 十字圣号 → 2. 宗徒信经一遍 → 3. 天主经一遍 → 4. 圣母经三遍 → 5. 圣三光荣经一遍；\n随后依次默想五端奥迹：每端念天主经一遍、圣母经十遍、圣三光荣经一遍，并加念法蒂玛祷词；五端后念《又圣母经》结束。\n【四套奥迹及分配】\n欢喜五端（周一、周六）：①圣母领报 ②圣母访亲 ③耶稣诞生 ④献耶稣于圣殿 ⑤耶稣十二岁在圣殿讲道。\n痛苦五端（周二、周五）：①山园祈祷 ②耶稣受鞭打 ③耶稣受茨冠凌辱 ④耶稣背十字架上加尔瓦略山 ⑤耶稣死在十字架上。\n荣福五端（周三、周日）：①耶稣复活 ②耶稣升天 ③圣神降临 ④圣母蒙召升天 ⑤天主立圣母为天后。\n光明五端（周四，教宗若望保禄二世2002年《童贞玛利亚的玫瑰经》增添）：①耶稣约旦河受洗 ②加纳婚宴行奇迹 ③宣讲天国 ④塔博尔山显圣容 ⑤建立圣体圣事。\n【依据】《天主教教理》2678-2679条；教宗若望保禄二世《童贞玛利亚的玫瑰经》宗座牧函（2002）。","source":"《天主教教理》2678-2679条；教宗若望保禄二世《童贞玛利亚的玫瑰经》（2002）；香港教区礼仪委员会《玫瑰经》PDF","keywords":["玫瑰经","Rosary","欢喜五端","痛苦五端","荣福五端","光明五端","圣母"]},{"id":"lit-030","module":"liturgy","category":"常用祈祷经文","title":"慈悲串经","content":"慈悲串经（Chaplet of Divine Mercy）是傅天娜修女（St. Faustina Kowalska）在耶稣显现指示下传授的祈祷，用于求主怜悯普世罪人。用普通玫瑰念珠诵念。\n【开始】先念天主经一遍、圣母经一遍、宗徒信经一遍。\n【每粒大珠上念（一遍）】\n永生之父，我把祢至爱之子，我们的主耶稣基督的圣体、圣血、灵魂及天主性奉献给祢，以赔补我们及普世的罪过。\n【每粒小珠上念（连续十次）】\n因祂的至悲惨苦难，求祢垂怜我们及普世。\n【结束（连续三遍）】\n至圣天主，至圣强有力者，至圣常存者，求祢垂怜我们及普世。\n【最后短祷】主耶稣，我们信赖祢！\n【依据】《天主的慈悲》敬礼；北京西什库《常用经文·慈悲串经》；香港教区礼仪委员会《慈悲串经》PDF。","source":"傅天娜修女《天主仁慈的讯音》；天主教北京教区《万有真原·慈悲串经》；香港教区礼仪委员会PDF","keywords":["慈悲串经","Divine Mercy","傅天娜修女","耶稣慈悲"]},{"id":"lit-031","module":"liturgy","category":"常用祈祷经文","title":"又圣母经（圣母亲皇后经 / Salve Regina）","content":"又圣母经（Hail Holy Queen）是中世纪以来西方教会晚祷结束时，向圣母玛利亚所念的著名祷文。\n【白话文全文】\n母后万福，仁慈的母亲，我们的生命、我们的甘饴、我们的希望。厄娃子孙在此尘世向妳哀呼，在这涕泣之谷向妳叹息哭求。我们的主保，求妳回顾、怜视我们，一旦流亡期满，使我们得见妳的圣子，万民称颂的耶稣。童真玛利亚，妳是宽仁的、慈悲的、甘饴的，天主之母，请为我们祈求，使我们堪受基督的恩许。阿们。\n【用途】玫瑰经每串结束后常念此经；每日晚祷（日课）中亦咏唱。","source":"《天主教教理》2675条；台湾主教团《天主教常用经文》（Salve Regina 中文译本）","keywords":["又圣母经","母后万福","Salve Regina","圣母","晚祷"]},{"id":"lit-032","module":"liturgy","category":"要理背诵","title":"天主十诫","content":"【第一诫】钦崇一天主在万有之上。\n【第二诫】毋呼天主圣名，以发虚誓。\n【第三诫】守瞻礼主日。\n【第四诫】孝敬父母。\n【第五诫】毋杀人。\n【第六诫】毋行邪淫。\n【第七诫】毋偷盗。\n【第八诫】毋妄证。\n【第九诫】毋愿他人妻。\n【第十诫】毋贪他人财物。\n【总结】右十诫，总归二者：爱天主在万有之上，并爱人如己。（玛22:37-40）\n【出处】出谷纪20:1-17；申命纪5:6-21；《要理问答》卷二·十诫。\n【依据】《天主教教理》2052-2557条。","source":"思高本《出谷纪》20:1-17、《申命纪》5:6-21；《天主教教理》2052-2557条；天主教在线《要理问答》","keywords":["十诫","天主十诫","诫命","出谷纪","爱主爱人"]},{"id":"lit-033","module":"liturgy","category":"要理背诵","title":"真福八端（山中圣训）","content":"耶稣在山中圣训中所宣的真福八端（思高本玛5:3-10）：\n一、神贫的人是有福的，因为天国是他们的。\n二、哀恸的人是有福的，因为他们要受安慰。\n三、温良的人是有福的，因为他们要承受土地。\n四、饥渴慕义的人是有福的，因为他们要得饱饫。\n五、怜悯人的人是有福的，因为他们要受怜悯。\n六、心里洁净的人是有福的，因为他们要看见天主。\n七、缔造和平的人是有福的，因为他们要称为天主的子女。\n八、为义而受迫害的人是有福的，因为天国是他们的。\n【依据】思高本《玛窦福音》5:3-10；《天主教教理》1716-1724条。","source":"思高本《玛窦福音》5:3-10；《天主教教理》1716-1724条；天主教温州教区每日读经","keywords":["真福八端","山中圣训","八福","玛窦福音5章"]},{"id":"lit-034","module":"liturgy","category":"要理背诵","title":"七件圣事名称","content":"基督建立、教会信守的圣事共有七件：\n一、圣洗圣事；\n二、坚振圣事；\n三、圣体圣事；\n四、忏悔（和好）圣事；\n五、病人傅油圣事；\n六、圣秩圣事；\n七、婚姻圣事。\n【入门三圣事】圣洗、坚振、圣体——为基督信仰生命的基础。\n【医治类圣事】忏悔（和好）、病人傅油——医治灵魂与身体的软弱。\n【服务与共融类圣事】圣秩、婚姻——为服务教会与人类团队而建立。\n【依据】《天主教教理》1113-1114、1210条；《要理问答》卷三·七件圣事。","source":"《天主教教理》1113-1114、1210条；天主教在线《要理问答》卷三·七件圣事","keywords":["七件圣事","圣事名称","入门圣事","背诵"]},{"id":"lit-035","module":"liturgy","category":"要理背诵","title":"圣神七恩","content":"圣神七恩（依11:2-3预言默西亚所赋之神恩）在坚振圣事中丰满地赐与领受者：\n一、上智——能以天主的观点看万物，轻世重天主；\n二、明达——能明了天主启示的深奥；\n三、超见——能在具体抉择中辨认天主旨意；\n四、勇力（刚毅）——勇敢克服信德与救灵的障碍；\n五、孝爱——以子女心肠亲近天主；\n六、聪敏——能分辨善恶、明白信德要义；\n七、敬畏（敬畏天主）——畏得罪天上大父，深爱天主。\n【依据】思高本《依撒意亚先知书》11:2-3；《天主教教理》1830-1831条；梵蒂冈广播电台《要理》第三卷。","source":"思高本《依撒意亚先知书》11:2-3；《天主教教理》1830-1831条；梵蒂冈广播电台《教理》1830-1831条","keywords":["圣神七恩","七恩","依撒意亚11章","坚振"]},{"id":"lit-036","module":"liturgy","category":"要理背诵","title":"三超德与四枢德","content":"向天主之德（超德，天主直接注入灵魂的三德）：\n一、信德——信从天主及其启示；\n二、望德——信赖天主的救恩与恩许；\n三、爱德——爱天主万有之上，并爱人如己。\n四枢德（人自然德性的枢纽）：\n一、智德——辨别真正的善；\n二、义德——给人及自己所应得；\n三、勇德——面对危险与困难不屈；\n四、节德——节制情欲与享乐。\n【依据】《天主教教理》1812-1845条；格前13:13；智8:7。\n【背诵口诀】信、望、爱为向天主三超德；智、义、勇、节为四枢德。","source":"《天主教教理》1812-1845条；思高本《格林多前书》13:13；《智慧篇》8:7","keywords":["三超德","四枢德","信望爱","智义勇节","德性"]},{"id":"lit-037","module":"liturgy","category":"教会常识","title":"教会圣统制（教宗、主教、神父、执事）","content":"天主教会自下而上的圣统秩序（教会法律与牧职层面）：\n1. 信友（平信徒）：教会的主体，因圣洗而分享基督的司祭、先知、王家职务。\n2. 执事：圣秩第三品，辅理主教与神父，协助礼仪、讲道与慈善服务。\n3. 司铎（神父）：主教的合作者，主持堂区牧灵工作，举行弥撒、听告解、施行圣事。\n4. 主教：宗徒的继承人，由教宗任命，牧养一个教区（地方教会），享有圣化、训导、治理三权。\n5. 枢机主教（红衣主教）：教宗点名的顾问，组成枢机团；教宗逝世时，80岁以下枢机选举新教宗。\n6. 教宗：罗马主教、圣伯多禄的继承人，普世教会的最高牧者，在法定情况下享有不能错的训导权威。\n【依据】梵二《教会》宪章（Lumen Gentium）；《天主教法典》；《天主教教理》874-896条。","source":"梵二大公会议《教会》宪章；《天主教教理》874-896条；天主教在线《天主教法典·教会圣统制》","keywords":["教宗","枢机","主教","神父","执事","圣统制","教会"]},{"id":"lit-038","module":"liturgy","category":"教会常识","title":"修会与奉献生活者","content":"除圣秩外，教会内有另一类奉献生活者，称为会士（男修会）与修女（女修会）。\n【三愿】发初愿（暂愿）与永愿（终身愿），矢发三愿：\n- 神贫——不私蓄财物，一切属于修会，完全依赖天主眷顾；\n- 贞洁——为天国而独身，全心事主；\n- 服从——服从长上，代表天主旨意。\n【类型】\n- 静观修会（如本笃会、加尔默罗会）：以祈祷、克己为专业。\n- 活动修会（如耶稣会、方济各会、多明我会）：从事福传、教育、医疗、慈善等服务。\n- 使徒生活团、世俗会士等在俗奉献生活团体。\n【依据】梵二《修会生活革新法令》；《天主教教理》914-932条。","source":"梵二大公会议《修会生活革新法令》；《天主教教理》914-932条","keywords":["修会","会士","修女","三愿","神贫贞洁服从","奉献生活"]},{"id":"lit-039","module":"liturgy","category":"教会常识","title":"弥撒中常见的物品与器具","content":"弥撒中常见礼仪用品及其象征：\n- 祭台：祭献与圣餐之桌，象征基督本身，是礼仪的中心。\n- 圣爵（Chalice）：盛葡萄酒（祝圣后为基督宝血）的圣杯。\n- 圣盘/圣体盒：盛无酵面饼（祝圣后为基督圣体）。\n- 苦像：带耶稣身像的十字架，提醒基督祭献。\n- 圣体柜：圣堂中专置圣体的柜柜，信友朝拜圣体之处。\n- 圣水壶：入门式洒圣水礼用，忆及圣洗。\n- 圣油：圣洗、坚振、圣秩、病人傅油所用的祝圣油。\n- 弥撒经书（Graduale/Missale）：主祭举行弥撒所用经文书。\n- 祭衣：主祭所穿之长白衣（alba）、腰带、胸衣、祭披（chasuble），颜色随节期而变（紫/白/绿/红）。\n- 十字架与蜡烛：象征基督是世界的光。\n【依据】《天主教教理》1199-1201条；礼仪宪章。","source":"《天主教教理》1199-1201条；梵二《礼仪》宪章（Sacrosanctum Concilium）","keywords":["弥撒物品","祭台","圣爵","圣体柜","苦像","祭衣"]},{"id":"lit-040","module":"liturgy","category":"教会常识","title":"礼仪中常见的手势与动作","content":"信友在礼仪中常用的身体动作及含义：\n- 划十字圣号：以右手在额、胸、左右肩划十字，呼号「因父、及子、及圣神之名」，是信仰与救赎奥迹的标记，起点终点皆用。\n- 跪拜（下跪/屈膝）：在圣体前、经过圣体柜时屈膝下跪（genuflection），表示对基督真实临在的至尊敬。\n- 鞠躬：宣读福音前、纪念圣人时，以腰身鞠躬致敬。\n- 深深躬身（profound bow）：在信经「由圣神降孕，由童贞玛利亚取得肉躯而成为人」处，全体躬身。\n- 捶胸：念忏悔词「我罪、我罪、我的重罪」时，以右手轻捶胸口，表示痛己之罪。\n- 合掌与举手：祈祷时心斋专注；主祭举手祝祷，代表基督大司祭。\n- 领圣体时：张口伸舌或双手交叉于胸前，恭领圣体。\n【依据】《天主教教理》1068、1345条；《罗马弥撒经书总论》。","source":"《天主教教理》1068、1345条；《罗马弥撒经书总论》（General Instruction of the Roman Missal）","keywords":["手势","划十字","跪拜","鞠躬","捶胸","礼仪动作"]},{"id":"lit-041","module":"liturgy","category":"教会常识","title":"主日（星期日）的意义与守斋","content":"主日（Dominica，星期日）是「一周的第八日」——基督复活的日子，也是新创造的日子。\n【天主教义务】\n1. 全体已领洗信友，除重大理由外，有义务主日参与弥撒。\n2. 主日应停止妨碍敬天主、妨碍主日喜乐的日常工作，把这一天特别奉献给天主。\n3. 守大小斋：年满18至59岁者，圣周五及圣灰礼仪日守大斋（一天饱食一次，两次小食）；全年星期五守小斋（不食热血动物肉，或以其他克己善功代替）。\n【主日的名称】主的日子（Apk 1:10）；八日的第一日；基督徒的复活日。\n【依据】《天主教教理》2180-2193条；《天主教法典》1246-1253条。","source":"《天主教教理》2180-2193条；《天主教法典》1246-1253条","keywords":["主日","星期日","主日弥撒","斋戒","义务"]}],"quiz_questions":[{"id":"quiz-001","module":"quiz","category":"信仰总论","title":"圣经全书共有多少卷？","content":"天主教《圣经》（思高本）新旧约合计共有多少卷？","type":"choice","options":["A. 66卷","B. 73卷","C. 72卷","D. 64卷"],"answer":"B","explanation":"天主教圣经共73卷：旧约46卷（含七卷次经）、新约27卷；基督新教为66卷，因未收录次经。","source":"《天主教教理》120-127条；思高圣经目录","keywords":["圣经","卷数","旧约","新约"]},{"id":"quiz-002","module":"quiz","category":"信仰总论","title":"信仰的中心是谁？","content":"基督信仰全部启示与教会宣认的中心是：","type":"choice","options":["A. 教会组织","B. 道德规范","C. 耶稣基督","D. 圣经知识"],"answer":"C","explanation":"信仰的中心是耶稣基督，祂是天主子、救世主；教会、圣经、伦理都围绕基督而存在（格前3:11）。","source":"《天主教教理》422-429条；格前3:11","keywords":["信仰","耶稣基督","中心"]},{"id":"quiz-003","module":"quiz","category":"信仰总论","title":"圣经是天主默示、无误的话。","content":"圣经是天主因圣神默感而写成的，在关乎得救的真理上无误。","type":"truefalse","answer":"对","explanation":"教会相信圣经是天主默示的（弟后3:16），在救恩真理上无误；这并不要求每句字面都是现代科学意义上的史实。","source":"《天主教教理》105-108条；弟后3:16","keywords":["圣经","默感","无误"]},{"id":"quiz-004","module":"quiz","category":"信仰总论","title":"圣经新旧约卷数","content":"天主教《圣经》旧约有（ ）卷，新约有（ ）卷，全书共73卷。","type":"fill","answer":"46；27","explanation":"旧约46卷（含七卷次经），新约27卷，合计73卷。","source":"思高圣经目录；《天主教教理》120-124条","keywords":["圣经","卷数","旧约","新约"]},{"id":"quiz-005","module":"quiz","category":"信仰总论","title":"什么是信德？","content":"简述天主教所讲“信德”（信仰）的含义。","type":"essay","answer":"1) 信德是天主白白赐予的恩宠，是圣神在人心中的工作；2) 信德是人自由地承认、依附天主，并完全信服祂所启示的一切；3) 信德不是盲目迷信，而是在理性与恩宠光照下的自由抉择；4) 信德藉爱德行事（迦5:6），并在教会生活中持守。","explanation":"评分要点：须答出“天主恩宠+人的自由回应”“依附天主启示”“以爱德行事”三层意思。","source":"《天主教教理》150-165条；迦拉达书5:6","keywords":["信德","信仰","恩宠"]},{"id":"quiz-006","module":"quiz","category":"信仰总论","title":"救恩最初来自谁？","content":"人不能靠自己的力量获得成义与永生，救恩最初来自：","type":"choice","options":["A. 人的善功","B. 法律遵守","C. 天主的慈爱与召叫","D. 教会神职人员"],"answer":"C","explanation":"救恩源于天主的慈爱与先召叫，人以信德回应；善功是恩宠在人心中的果实，不是赚取永生的代价。","source":"《天主教教理》1987-2005条；罗马书3:24","keywords":["救恩","恩宠","成义"]},{"id":"quiz-007","module":"quiz","category":"信仰总论","title":"恩宠是人凭善行赚来的。","content":"只要我行善积德，就能凭功劳赚得天主的恩宠。","type":"truefalse","answer":"错","explanation":"恩宠是天主白白赐予的（罗11:6；罗6:23），人不能赚得最初的恩宠；善行是恩宠在人心中工作的果实。","source":"《天主教教理》1996-2002条；罗马书11:6","keywords":["恩宠","善行","功绩"]},{"id":"quiz-008","module":"quiz","category":"天主与三位一体","title":"我们信的天主是几位？","content":"天主教宣认的天主是：","type":"choice","options":["A. 三位天主","B. 一位天主，内有三个位格","C. 一位天主，只有一个位格","D. 三位神合成一位天主"],"answer":"B","explanation":"我们信唯一的天主，祂在唯一的性体内有三个位格：父、子、圣神，即至圣圣三（玛28:19）。","source":"《天主教教理》232-267条；玛窦福音28:19","keywords":["三位一体","天主","位格"]},{"id":"quiz-009","module":"quiz","category":"天主与三位一体","title":"“我是自有者”启示于哪卷书？","content":"天主在焚烧的荆棘中向梅瑟启示祂的名字“我是自有者”，记载于：","type":"choice","options":["A. 《创世纪》","B. 《申命纪》","C. 《出埃及记》","D. 《户籍纪》"],"answer":"C","explanation":"载于出谷纪（出埃及记）3:14，表明天主是自有的、永恒的、无限的存有。","source":"《出埃及记》3:14；《天主教教理》205-213条","keywords":["天主的名","出埃及记","自有者"]},{"id":"quiz-010","module":"quiz","category":"天主与三位一体","title":"三位一体是三位天主。","content":"父、子、圣神是三位彼此分开的天主，合起来才是天主。","type":"truefalse","answer":"错","explanation":"三位一体不是三位神，而是唯一天主性体内的三个位格：同性同体、同性同属，并非三位天主。","source":"《天主教教理》253-256条","keywords":["三位一体","位格","性体"]},{"id":"quiz-011","module":"quiz","category":"天主与三位一体","title":"三位一体的三个位格","content":"至圣圣三包括三个位格：（ ）、（ ）、（ ）。","type":"fill","answer":"圣父；圣子；圣神","explanation":"父不是子，子不是圣神，圣神不是父；但三位共有唯一的天主性、本质与本体。","source":"《天主教教理》255-258条；玛窦福音28:19","keywords":["三位一体","圣父","圣子","圣神"]},{"id":"quiz-012","module":"quiz","category":"天主与三位一体","title":"简述三位一体奥迹","content":"简述天主教信仰中“至圣圣三”的奥迹。","type":"essay","answer":"1) 我们信唯一的天主；2) 天主内有三个真正不同的位格：父、子、圣神；3) 三位共有同一性体、同一天主性，并非三神；4) 父是永恒之源，子由父永恒所生，圣神由父及子所发；5) 这是理性不能完全透彻、却由基督启示的奥迹。","explanation":"评分要点：“一性体、三位格”“非三神”“父子神的关系”三层不可缺。","source":"《天主教教理》232-267条","keywords":["三位一体","奥迹","天主"]},{"id":"quiz-013","module":"quiz","category":"天主与三位一体","title":"天主最核心的属性","content":"若望一书明言“天主是____”，这是启示给我们的天主最核心的面目。","type":"choice","options":["A. 能力","B. 威严","C. 爱","D. 公义"],"answer":"C","explanation":"若一4:8、16明言“天主是爱”；其他属性都在这爱的光照下理解。","source":"《若望一书》4:8,16；《天主教教理》220-221条","keywords":["天主是爱","若望一书"]},{"id":"quiz-014","module":"quiz","category":"天主与三位一体","title":"天主按自己的肖像造了人。","content":"圣经记载天主照自己的肖像造了人，造男造女。","type":"truefalse","answer":"对","explanation":"载于创1:27；人因此具有尊严、理智、自由与爱德的能力。","source":"《创世纪》1:27；《天主教教理》355-361条","keywords":["创世","肖像","人"]},{"id":"quiz-015","module":"quiz","category":"耶稣基督","title":"耶稣由谁而生？","content":"按天主教信仰，耶稣基督取了人性，是由：","type":"choice","options":["A. 若瑟按常理所生","B. 罗马帝国皇室后裔","C. 圣神因童贞玛利亚而孕生","D. 天使化身"],"answer":"C","explanation":"耶稣由圣神受孕、童贞玛利亚所生（玛1:18-25，路1:35），这就是“降生成人”的奥迹。","source":"《玛窦福音》1:18-25；《路加福音》1:35；《天主教教理》496-511条","keywords":["耶稣","降生成人","童贞玛利亚"]},{"id":"quiz-016","module":"quiz","category":"耶稣基督","title":"复活节是哪一天？","content":"教会庆祝耶稣复活的日子（复活节）是：","type":"choice","options":["A. 12月25日","B. 五旬节","C. 复活期主日（春分月圆后第一个主日）","D. 升天节"],"answer":"C","explanation":"复活节按犹太历尼散月十五日推算，即春分后第一次月圆后的第一个主日；12月25日是圣诞节。","source":"《天主教教理》1168-1173条；礼仪年历","keywords":["复活节","耶稣复活","礼仪年"]},{"id":"quiz-017","module":"quiz","category":"耶稣基督","title":"耶稣是真人，也是真天主。","content":"耶稣基督具有完整的神性与完整的人性，是一位二性的天主子。","type":"truefalse","answer":"对","explanation":"迦克墩大公会议（451年）定断：基督一位二性，神性人性不相混、不分离、不调换、不割裂。","source":"《天主教教理》464-470条","keywords":["耶稣基督","一位二性","迦克墩"]},{"id":"quiz-018","module":"quiz","category":"耶稣基督","title":"“厄玛奴耳”的含义","content":"耶稣的另一名字叫“厄玛奴耳”，意思是“（ ）与我们同在”。","type":"fill","answer":"天主（上主）","explanation":"依7:14预言、玛1:23应验，“厄玛奴耳”即“天主与我们同在”，指明基督天主性与人性的结合。","source":"《依撒意亚先知书》7:14；《玛窦福音》1:23","keywords":["厄玛奴耳","耶稣","预言"]},{"id":"quiz-019","module":"quiz","category":"耶稣基督","title":"耶稣复活的信仰意义","content":"简述耶稣基督复活对基督徒信仰的意义。","type":"essay","answer":"1) 证明耶稣是天主子，其教训与救赎为天主所印证；2) 完成救恩，战胜罪恶与死亡；3) 是我们将来复活的根据与保证（格前15）；4) 赐予圣神，建立教会；5) 给信徒带来新生命与希望。","explanation":"评分要点：须答出“证明天主子身份”“战胜死亡”“信徒复活的根据”三点以上。","source":"《天主教教理》638-658条；格前多书15:12-23","keywords":["复活","救恩","信仰"]},{"id":"quiz-020","module":"quiz","category":"耶稣基督","title":"基督的救赎工程完成于：","content":"耶稣基督替人类赎罪、完成救恩，主要是在：","type":"choice","options":["A. 圣诞诞生","B. 约但河受洗","C. 升天","D. 十字架上的受难与复活"],"answer":"D","explanation":"十字架的受难与复活即“逾越奥迹”，是救恩完成的核心；圣诞、传教、升天都指向此。","source":"《天主教教理》571-620条；格前多书15:3-4","keywords":["逾越奥迹","十字架","救赎"]},{"id":"quiz-021","module":"quiz","category":"耶稣基督","title":"耶稣只有人性，没有真正的神性。","content":"耶稣只是一位圣人，被天主收养为子，本身并非真天主。","type":"truefalse","answer":"错","explanation":"这是被教会定断为异端的“嗣子论”。尼西亚信经明认耶稣是天主子、出自天主的天主、出自光的光、出自真天主的真天主。","source":"《天主教教理》464-469条；尼西亚信经","keywords":["耶稣神性","嗣子论","异端"]},{"id":"quiz-022","module":"quiz","category":"圣神","title":"圣神何时降临？","content":"五旬节那天，圣神以火舌的形象降临在宗徒与圣母身上，此事记载于：","type":"choice","options":["A. 《玛窦福音》","B. 《默示录》","C. 《宗徒大事录》","D. 《罗马书》"],"answer":"C","explanation":"载于宗2:1-4；此日常被视为教会的诞辰。","source":"《宗徒大事录》2:1-4；《天主教教理》731-732条","keywords":["圣神","五旬节","宗徒大事录"]},{"id":"quiz-023","module":"quiz","category":"圣神","title":"坚振圣事通常由谁施行？","content":"坚振圣事因圣神赐予印记，其通常的施行者是：","type":"choice","options":["A. 神父（司铎）","B. 教友本人","C. 主教","D. 修女"],"answer":"C","explanation":"按教会现行法，坚振的正常施行者是主教；在紧迫或主教准许时，司铎亦可施行。","source":"《天主教教理》1312-1316条","keywords":["坚振","圣神","主教"]},{"id":"quiz-024","module":"quiz","category":"圣神","title":"圣神是第三位格。","content":"圣神不是一种能力或气氛，而是三位一体中的第三位格，与父、子同性同体。","type":"truefalse","answer":"对","explanation":"尼西亚·君士坦丁堡信经明认圣神是主及赋生命者，发自父及子，与父子同受朝拜、同受光荣。","source":"《尼西亚信经》；《天主教教理》687-690条","keywords":["圣神","位格","信经"]},{"id":"quiz-025","module":"quiz","category":"圣神","title":"圣神的七项恩赐","content":"依传统列举圣神的七项恩赐：智慧、聪敏、（ ）、勇毅、明达、（ ）、敬畏天主。","type":"fill","answer":"超见；孝爱","explanation":"依《依撒意亚先知书》11:2-3，传统列举圣神七恩赐：智慧、聪敏、超见、勇毅、明达、孝爱、敬畏上主。","source":"《依撒意亚先知书》11:2-3；《天主教教理》1831条","keywords":["圣神恩赐","七恩赐"]},{"id":"quiz-026","module":"quiz","category":"圣神","title":"圣神在教会和信徒身上的工作","content":"简述圣神在救恩与教会中的主要工作。","type":"essay","answer":"1) 在五旬节降临，建立并引导教会；2) 赐予信徒成圣、成义的恩宠；3) 藉圣事赋予恩宠与印记；4) 赐人智慧、超见等恩赐，以及爱、喜乐、平安等圣神的果实；5) 引导教会进入一切真理，并助信徒祈祷。","explanation":"评分要点：“建立引导教会”“祝圣成义”“赐恩赐与果实”为核心三点。","source":"《天主教教理》687-747条；格前多书12章；迦拉达书5:22-23","keywords":["圣神","教会","恩赐"]},{"id":"quiz-027","module":"quiz","category":"圣神","title":"圣神只是一种能力，不是位格。","content":"圣神是天主发出的一种力量或影响，本身并非一个“位格”。","type":"truefalse","answer":"错","explanation":"教会信理明确：圣神是第三位格，与父子同性同体；圣神可以被“叫忧”（弗4:30）、被亵渎（玛12:31），证明祂是位格而非单纯能力。","source":"《天主教教理》687-690条；厄弗所书4:30","keywords":["圣神","位格"]},{"id":"quiz-028","module":"quiz","category":"教会","title":"教会具有哪四个标志？","content":"尼西亚信经中宣认教会的四个特征（“四标”）是：","type":"choice","options":["A. 至一、至圣、至公、宗徒传下","B. 宏大、富有、悠久、统一","C. 神圣、奇迹、先知、君王","D. 有形、无形、神恩、组织"],"answer":"A","explanation":"教会是“唯一的、神圣的、大公的、宗徒的”（una, sancta, catholica, apostolica）。","source":"《尼西亚信经》；《天主教教理》811-869条","keywords":["教会四特征","信经"]},{"id":"quiz-029","module":"quiz","category":"教会","title":"教会是谁建立的？","content":"天主教相信教会的创始者是：","type":"choice","options":["A. 伯多禄","B. 保禄","C. 教宗","D. 耶稣基督"],"answer":"D","explanation":"教会是基督亲自建立的（玛16:18）；伯多禄及后继教宗是可见的磐石与牧人。","source":"《玛窦福音》16:18；《天主教教理》763-770条","keywords":["教会","建立","耶稣"]},{"id":"quiz-030","module":"quiz","category":"教会","title":"教宗是圣伯多禄的继承人。","content":"天主教相信罗马教宗是伯多禄的继承人、全教会的可见元首。","type":"truefalse","answer":"对","explanation":"基于玛16:18“你是伯多禄，在这磐石上我要建立我的教会”；教宗与世界主教团共融，负责全教会。","source":"《玛窦福音》16:18-19；《天主教教理》880-883条","keywords":["教宗","伯多禄","继承人"]},{"id":"quiz-031","module":"quiz","category":"教会","title":"教会四特征填空","content":"信经中我们宣认教会是“唯一、（ ）、（ ）、（ ）”的。","type":"fill","answer":"至圣（神圣）；至公（大公）；宗徒传下（宗徒的）","explanation":"即“至一、至圣、至公、宗徒”四个标志，源自尼西亚·君士坦丁堡信经。","source":"《尼西亚信经》；《天主教教理》811-869条","keywords":["教会四特征","信经"]},{"id":"quiz-032","module":"quiz","category":"教会","title":"教会的使命","content":"简述教会在世界上的使命。","type":"essay","answer":"1) 传扬福音，使万民成为基督的门徒（玛28:19大使命）；2) 举行礼仪与圣事，滋养信众；3) 爱德服务，服务弱小与困苦者；4) 持守并传存天主的启示与训导；5) 作世界的盐与光，使人类社会迈向天国。","explanation":"评分要点：“传福音”“礼仪圣事”“爱德服务”为核心三要点。","source":"《玛窦福音》28:19-20；《天主教教理》767-769, 849-856条","keywords":["教会使命","福音","爱德"]},{"id":"quiz-033","module":"quiz","category":"教会","title":"教会公开诞生于哪一天？","content":"按教会传统，公开的教会诞生于：","type":"choice","options":["A. 耶稣圣诞","B. 耶稣复活","C. 五旬节圣神降临","D. 耶稣升天"],"answer":"C","explanation":"五旬节圣神降临，宗徒们公开作证，教会由此开始公开生活（宗2章）。","source":"《宗徒大事录》2章；《天主教教理》731-732条","keywords":["教会诞生","五旬节"]},{"id":"quiz-034","module":"quiz","category":"教会","title":"教会只是人的社会组织。","content":"教会本质上只是一个由信徒自发组成的宗教社团，与神无关。","type":"truefalse","answer":"错","explanation":"教会是基督的奥体、天主的子民、圣神的圣殿，既有凡人组织一面，也有神性一面。","source":"《天主教教理》763-770, 779-781条","keywords":["教会","奥体"]},{"id":"quiz-035","module":"quiz","category":"圣事","title":"教会共有几件圣事？","content":"天主教正统信仰承认的圣事数目是：","type":"choice","options":["A. 三件","B. 五件","C. 八件","D. 七件"],"answer":"D","explanation":"教会有七件圣事：圣洗、坚振、圣体、和好（告解）、病人傅油、圣秩（神品）、婚姻。","source":"《天主教教理》1113条；特利腾大公会议","keywords":["七件圣事","总数"]},{"id":"quiz-036","module":"quiz","category":"圣事","title":"圣洗圣事的施行者","content":"正常情况下，圣洗圣事的施行者是：","type":"choice","options":["A. 主教或神父（圣职人员）","B. 任何教友随意施洗即可，无要求","C. 修女","D. 只有教宗"],"answer":"A","explanation":"圣洗的正常施行者是主教、神父（司铎）；在紧急情况下，任何信徒（甚至非教友）以正确意向奉三位一体之名施洗皆有效。","source":"《天主教教理》1256条","keywords":["圣洗","施洗者"]},{"id":"quiz-037","module":"quiz","category":"圣事","title":"圣体圣事中临在的是：","content":"天主教相信，弥撒中经祝圣后的饼酒内，真实临在的是：","type":"choice","options":["A. 只是象征意义","B. 天主恩典的符号","C. 耶稣基督的体、血、灵魂、天主性真实临在","D. 宗徒们的遗痕"],"answer":"C","explanation":"即“真实临在”（体变）：饼酒的实体变为基督的体血，外形仍存；基督整个人——体、血、灵魂、天主性——临在于此。","source":"《天主教教理》1374-1377条","keywords":["圣体","真实临在","体变"]},{"id":"quiz-038","module":"quiz","category":"圣事","title":"“圣事之圣事”是哪一件？","content":"在七件圣事中，被称为教会整个生命的泉源与顶峰的是：","type":"choice","options":["A. 圣洗","B. 坚振","C. 神品","D. 圣体圣事"],"answer":"D","explanation":"梵二《教会宪章》说：圣体是教会生活的泉源与顶峰，其他圣事都为之服务。","source":"《天主教教理》1322-1324条；《教会宪章》11条","keywords":["圣体","泉源与顶峰"]},{"id":"quiz-039","module":"quiz","category":"圣事","title":"告解（和好）圣事赦免一切大罪。","content":"诚心认罪、痛悔、定改、并补赎后，神父奉基督之权柄赦免领洗后所犯的大罪。","type":"truefalse","answer":"对","explanation":"和好圣事是领洗后堕落者获得罪赦与重新成义的正常途径（若20:22-23）。","source":"《天主教教理》1422, 1480-1484条","keywords":["告解","和好","罪赦"]},{"id":"quiz-040","module":"quiz","category":"圣事","title":"病人傅油圣事只可在临终时领一次。","content":"病人傅油圣事只能在人即将断气时领一次，重病好转后不可再领。","type":"truefalse","answer":"错","explanation":"病人傅油在人重病、衰老或面临死亡危险时即可领；病情恶化或新病复发时可重领。","source":"《天主教教理》1514-1515条","keywords":["病人傅油","临终"]},{"id":"quiz-041","module":"quiz","category":"圣事","title":"七件圣事名称","content":"教会的七件圣事是：圣洗、（ ）、圣体、（ ）、病人傅油、（ ）、婚姻。","type":"fill","answer":"坚振；和好（告解/忏悔）；圣秩（神品）","explanation":"完整七件：圣洗、坚振、圣体、和好（忏悔）、病人傅油、圣秩（神品）、婚姻（婚配）。","source":"《天主教教理》1113条","keywords":["七件圣事","名称"]},{"id":"quiz-042","module":"quiz","category":"圣事","title":"圣事是什么？有什么效果？","content":"简述天主教信仰中“圣事”的定义与主要效果。","type":"essay","answer":"1) 圣事是基督建立、交托教会的有形标记；2) 它们实际赋予（不仅仅象征）恩宠；3) 使人与基督及奥体（教会）结合；4) 赋予圣化恩宠与相应的特殊恩宠；5) 其中圣洗、坚振、神品三件，在灵魂上印上不可磨灭的神印，不能重领。","explanation":"评分要点：“基督建立”“有形标记”“实赋恩宠”“神印”为核心。","source":"《天主教教理》1131-1139, 1272-1274条","keywords":["圣事","定义","恩宠","神印"]},{"id":"quiz-043","module":"quiz","category":"圣事","title":"婚姻圣事的施行者是谁？","content":"按教会传统，婚姻圣事的主要施行者是：","type":"choice","options":["A. 神父","B. 新婚夫妇彼此","C. 主教","D. 教友代表"],"answer":"B","explanation":"婚姻中夫妻彼此互相授予圣事，神父/执事是教会的法定见证人。","source":"《天主教教理》1623, 1630条","keywords":["婚姻","圣事","施行者"]},{"id":"quiz-044","module":"quiz","category":"十诫与道德","title":"天主十诫颁给了谁？","content":"天主在西奈山把十诫颁布给：","type":"choice","options":["A. 亚当","B. 诺厄","C. 梅瑟（摩西）与以民","D. 达味"],"answer":"C","explanation":"载于出19-20、申5；十诫是天主与以民订立盟约的法律核心。","source":"《出埃及记》20:1-17；《天主教教理》2055-2063条","keywords":["十诫","梅瑟","西奈山"]},{"id":"quiz-045","module":"quiz","category":"十诫与道德","title":"第一诫的内容","content":"天主十诫第一诫要求：","type":"choice","options":["A. 不可妄称天主的名","B. 孝敬父母","C. 当守安息日","D. 除天主外，不可敬拜别的神"],"answer":"D","explanation":"第一诫：“我是上主你的天主，除我之外，你不可有别的神。”","source":"《出埃及记》20:2-3；《天主教教理》2084-2114条","keywords":["第一诫","独一神"]},{"id":"quiz-046","module":"quiz","category":"十诫与道德","title":"主日（星期日）应参与弥撒。","content":"教友有义务在星期日及法定节日停止不必要的工作，并全望参与弥撒。","type":"truefalse","answer":"对","explanation":"这是第三诫（圣教四规之一）的要求；星期日是主日，纪念主的复活。","source":"《天主教教理》2180-2183条；圣教四规","keywords":["主日","弥撒","诫命"]},{"id":"quiz-047","module":"quiz","category":"十诫与道德","title":"十诫条数","content":"天主在西奈山颁布给以民的诫命共有（ ）条，通称“十诫”。","type":"fill","answer":"十（10）","explanation":"“十诫”（Decalogue）即十句话，刻在两块石版上。","source":"《出埃及记》34:28；《申命记》4:13","keywords":["十诫","数目"]},{"id":"quiz-048","module":"quiz","category":"十诫与道德","title":"真福八端的意义","content":"简述耶稣在山中圣训中宣讲的“真福八端”及其意义。","type":"essay","answer":"1) 八端为：神贫的人、哀恸的人、温良的人、慕义如渴的人、怜悯人的人、心洁的人、缔造和平的人、为义而受迫害的人是有福的；2) 真福八端揭示天国的价值观，与世俗所重的强大、富足相反；3) 指向永生真福，是基督徒伦理的高峰；4) 描绘基督自己的面貌，呼召信徒跟随祂。","explanation":"评分要点：能列出至少4-6端，并说明其“指向天国、与世俗价值相反”的意义。","source":"《玛窦福音》5:3-10；《天主教教理》1716-1729条","keywords":["真福八端","山中圣训","伦理"]},{"id":"quiz-049","module":"quiz","category":"十诫与道德","title":"构成“大罪”的三要素","content":"按天主教伦理，一项罪过成为大罪，须同时具备：","type":"choice","options":["A. 对象本为重罪、清楚知道、意志完全同意","B. 大损失、大情绪、大公开","C. 大罪过、大群体、大声张","D. 大机会、大诱惑、大后悔"],"answer":"A","explanation":"大罪三条件：对象本为重罪（material gravis）、清楚知道、意志完全同意（教理1857）。","source":"《天主教教理》1857条","keywords":["大罪","三条件","伦理"]},{"id":"quiz-050","module":"quiz","category":"十诫与道德","title":"小罪会丧失圣化恩宠。","content":"小罪（venial sin）虽削弱爱德，但不使人丧失圣化恩宠。","type":"truefalse","answer":"对","explanation":"小罪不破坏与天主的友谊，但使心灵冷淡；可藉悔罪、圣体、补赎等弥补。","source":"《天主教教理》1862-1864条","keywords":["小罪","大罪","恩宠"]},{"id":"quiz-051","module":"quiz","category":"祈祷与灵修","title":"《天主经》是谁教给门徒的？","content":"《天主经》（主祷文）是：","type":"choice","options":["A. 梅瑟在西奈山颁布","B. 保禄写信时所作","C. 耶稣基督亲自教给门徒","D. 早期教会编选"],"answer":"C","explanation":"载于玛6:9-13、路11:2-4，是应门徒请求“主，请教我们祈祷”时耶稣口授的。","source":"《玛窦福音》6:9-13；《天主教教理》2759-2760条","keywords":["天主经","主祷文","耶稣"]},{"id":"quiz-052","module":"quiz","category":"祈祷与灵修","title":"玫瑰经主要敬礼谁？","content":"玫瑰经是一种反复诵念、默想耶稣和玛利亚奥迹的祈祷，主要敬礼：","type":"choice","options":["A. 若洗者","B. 圣若瑟","C. 圣母玛利亚","D. 天使长弥额尔"],"answer":"C","explanation":"玫瑰经通过圣母，默想基督的救赎奥迹（欢喜、痛苦、光荣、光明五组奥迹）。","source":"《天主教教理》2678-2679条","keywords":["玫瑰经","圣母","祈祷"]},{"id":"quiz-053","module":"quiz","category":"祈祷与灵修","title":"天主经第一句是“我们的天父”。","content":"《天主经》的开头是“我们在天的父，愿你的名被尊为圣……”。","type":"truefalse","answer":"对","explanation":"玛6:9；“父”（阿爸 Abba）是耶稣启示给门徒对天主最亲密的称呼。","source":"《玛窦福音》6:9；《天主教教理》2779-2782条","keywords":["天主经","天父"]},{"id":"quiz-054","module":"quiz","category":"祈祷与灵修","title":"天主经中的祈求","content":"天主经中我们祈求：“愿你的（ ）来临，愿你的（ ）承行，在地如在天。”","type":"fill","answer":"国；旨（旨意）","explanation":"玛6:10，基督徒最核心的祈祷：愿天主为王、愿祂的旨意奉行在人间。","source":"《玛窦福音》6:10","keywords":["天主经","天国","旨意"]},{"id":"quiz-055","module":"quiz","category":"祈祷与灵修","title":"祈祷的意义与常用方式","content":"简述天主教信仰中“祈祷”的意义与常见方式。","type":"essay","answer":"1) 祈祷是人心对天主的言语与聆听，是子女与父的对话；2) 它是恩宠与我们的回应相结合；3) 常用方式包括：诵经、默想、默观、感恩、祈求、补赎；4) 具体经文如天主经、圣母经、圣三光荣经、玫瑰经；5) 主日弥撒、每日私祷、家庭祈祷是教会生活的重要支柱。","explanation":"评分要点：“人与天主对话”“恩宠+回应”“举出至少两种方式”。","source":"《天主教教理》2558-2565, 2650-2661条","keywords":["祈祷","默想","灵修"]},{"id":"quiz-056","module":"quiz","category":"祈祷与灵修","title":"只要把经文念出来就算祈祷。","content":"祈祷等于把经文快速念完，不必用心思与情感。","type":"truefalse","answer":"错","explanation":"耶稣批评只在唇舌上亲近天主而心远离的人（玛15:8）；祈祷须心神结合，念经只是工具。","source":"《玛窦福音》15:8；《天主教教理》2700-2712条","keywords":["祈祷","用心","念经"]},{"id":"quiz-057","module":"quiz","category":"圣母与诸圣","title":"玛利亚怎样怀上耶稣？","content":"天主教相信耶稣的母亲玛利亚：","type":"choice","options":["A. 与若瑟正常结婚后怀孕","B. 天生为神","C. 被天使奇迹般由若瑟受孕","D. 因圣神受孕，卒世童贞"],"answer":"D","explanation":"玛利亚终身童贞：受孕基督是由圣神，且在耶稣生前、诞生时及以后始终童贞。","source":"《路加福音》1:27,34-35；《天主教教理》499-500条","keywords":["圣母","童贞","圣神"]},{"id":"quiz-058","module":"quiz","category":"圣母与诸圣","title":"圣母灵魂肉身被接升天的信条","content":"1950年教宗定义的信条“玛利亚灵魂肉身光荣升天”称为：","type":"choice","options":["A. 无染原罪","B. 天主之母","C. 圣母升天","D. 卒世童贞"],"answer":"C","explanation":"碧岳十二世1950年颁布《何其强大的天主》（Munificentissimus Deus），定义圣母升天信条。","source":"《天主教教理》966-970条","keywords":["圣母升天","信条"]},{"id":"quiz-059","module":"quiz","category":"圣母与诸圣","title":"敬礼圣母和朝拜天主是同一回事。","content":"我们敬拜（latria）圣母如同敬拜天主一样。","type":"truefalse","answer":"错","explanation":"教会区分：朝拜（latria）只归于天主；对圣母及诸圣是“敬礼”（dulia），对圣母是特殊的“孝爱敬礼”（hyperdulia）。","source":"《天主教教理》971, 2132条","keywords":["圣母敬礼","朝拜","孝爱"]},{"id":"quiz-060","module":"quiz","category":"圣母与诸圣","title":"圣母经","content":"圣母经：“万福玛利亚，满被（ ），主与你同在。你在妇女中是蒙祝福的，你的胎儿耶稣也是蒙祝福的。天主圣母玛利亚，为我们（ ），现在和临终之时，祈祷。阿们。”","type":"fill","answer":"圣宠（恩宠）；罪人","explanation":"经文融合路1:28“满被恩宠”与路1:42“在妇女中是蒙祝福的”，是教会最常用的向圣母请安的祈祷。","source":"《路加福音》1:28,42；《天主教教理》2676条","keywords":["圣母经","经文"]},{"id":"quiz-061","module":"quiz","category":"圣母与诸圣","title":"圣母在救恩工程中的地位","content":"简述天主教信仰中圣母玛利亚在救恩工程中的地位与角色。","type":"essay","answer":"1) 她是天主子的母亲（天主之母）；2) 由圣神受孕，卒世童贞；3) 因预先的救恩而“无染原罪”；4) 在十字架下与基督的救赎结合，成为人类的母亲（新厄娃）；5) 灵魂肉身被接升天，是教会的典型与母亲。","explanation":"评分要点：“天主之母”“童贞/无染原罪”“与救赎结合”“升天”四点至少答出三点。","source":"《天主教教理》484-511, 773, 963-970条","keywords":["圣母","天主之母","救赎"]},{"id":"quiz-062","module":"quiz","category":"圣母与诸圣","title":"诸圣相通功。","content":"天上的诸圣、炼灵与在世旅途的教会信徒，在基督奥体内彼此相通、互相代祷。","type":"truefalse","answer":"对","explanation":"“诸圣相通功”是信经宣认的真理；我们请诸圣转祷，不是拜他们，而是请他们代求。","source":"《天主教教理》956-962条","keywords":["诸圣相通功","代祷"]},{"id":"quiz-063","module":"quiz","category":"末世与终局","title":"人死后的结局是：","content":"教会训导明确：“人人死后都要受审判，然后按照自己的行为得报应。”这指的是：","type":"choice","options":["A. 死后化为乌有","B. 死后轮回转生","C. 死后且有审判，然后是永生或永罚","D. 死后成为精灵"],"answer":"C","explanation":"希9:27“按定为人人都要死一次，死后还要受审判”。","source":"《希伯来书》9:27；《天主教教理》1021-1022条","keywords":["末世","死后","审判"]},{"id":"quiz-064","module":"quiz","category":"末世与终局","title":"炼狱是什么状态？","content":"按天主教训导，炼狱是：","type":"choice","options":["A. 地狱的一部分","B. 天堂的另一名称","C. 人死后的沉睡","D. 已蒙罪赦、但尚需炼净后才能进天国者的状态"],"answer":"D","explanation":"炼狱是那些在天主恩宠中去世、但尚未完全炼净者，暂时炼净的状态，之后才能见天主。","source":"《天主教教理》1030-1032条","keywords":["炼狱","炼净","末世"]},{"id":"quiz-065","module":"quiz","category":"末世与终局","title":"天堂是与天主永远同在。","content":"天堂（永生）是被救者在光荣中面对面享见天主、与天主及诸圣永远共融的状态。","type":"truefalse","answer":"对","explanation":"即“真福直观”（visio beatifica）：被救者直达天主本体，享永远福乐。","source":"《天主教教理》1023-1029条","keywords":["天堂","永生","真福"]},{"id":"quiz-066","module":"quiz","category":"末世与终局","title":"人的“四终”","content":"传统慕道要理常提醒人默想“人生四终”：（ ）、（ ）、（ ）、（ ）。","type":"fill","answer":"死亡；审判；天堂（永生）；地狱（永罚）","explanation":"四终：死、审判、天堂、地狱（有时并入炼狱）。意在提醒人时刻准备好迎接主。","source":"《天主教教理》1013, 1021-1022条","keywords":["四终","末世","死亡"]},{"id":"quiz-067","module":"quiz","category":"末世与终局","title":"公审判（基督第二次来临）","content":"简述天主教信仰中“基督再度来临与公审判”的教导。","type":"essay","answer":"1) 耶稣基督死后复活升天，将于末日光荣中再度来临；2) 届时一切人都要复活，肉身与灵魂重新结合；3) 基督将对全人类作出公审判；4) 义人进入永生光荣，恶人进入永罚；5) 届时天主将完成新天新地，天主与人永远同在。","explanation":"评分要点：“二次来临”“死者复活”“公审判”“新天新地”至少答出三点。","source":"《天主教教理》1038-1050条；若望福音5:28-29","keywords":["公审判","基督再来","新天新地"]},{"id":"quiz-068","module":"quiz","category":"末世与终局","title":"人死后再没有悔改的机会。","content":"人死后命运已经确定，不能再悔改、再改变与天主的关系。","type":"truefalse","answer":"对","explanation":"教会训导：灵魂在死亡的瞬间即作出其最终的、不可撤回的抉择（即临终决断），死后不再有悔改机会。","source":"《天主教教理》1021-1022, 1058条","keywords":["死后","悔改","临终"]}]};
+
+</script>
+<script>
+/* 天主教学习系统 · 前端逻辑 */
+(function(){
+  'use strict';
+
+  var D = window.CATHOLIC_DATA;
+  var MODULES = {
+    catechism: {
+      key:'catechism', label:'教理问答',
+      desc:'慕道班考试导向的核心考点，按类别分组，点击卡片展开问答全文。',
+      list: D.catechism
+    },
+    bible_stories: {
+      key:'bible_stories', label:'圣经故事',
+      desc:'旧约与新约通俗故事，帮助教友读懂圣经。',
+      list: D.bible_stories
+    },
+    liturgy_prayers: {
+      key:'liturgy_prayers', label:'圣事礼仪与祈祷',
+      desc:'七件圣事、弥撒礼仪、教会节期与常用祈祷经文。',
+      list: D.liturgy_prayers
+    },
+    quiz_questions: {
+      key:'quiz_questions', label:'自测题库',
+      desc:'单选 / 判断 / 填空 / 简答，练习与模拟自测。',
+      list: D.quiz_questions
+    }
+  };
+
+  /* ---------- 工具 ---------- */
+  function $(sel){ return document.querySelector(sel); }
+  function $all(sel){ return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+  function esc(s){
+    if(s==null) return '';
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  // 全角转半角
+  function halfWidth(s){
+    return String(s).replace(/[\uFF01-\uFF5E]/g, function(ch){
+      return String.fromCharCode(ch.charCodeAt(0)-0xFEE0);
+    }).replace(/\u3000/g,' ');
+  }
+  function normalizeFill(s){
+    return halfWidth(s).replace(/\s+/g,'').trim();
+  }
+  function groupByCat(list){
+    var order=[], map={};
+    list.forEach(function(it){
+      if(!map[it.category]){ map[it.category]=[]; order.push(it.category); }
+      map[it.category].push(it);
+    });
+    return {order:order, map:map};
+  }
+  function catOrder(list){ return groupByCat(list).order; }
+
+  /* ---------- 视图切换 ---------- */
+  var currentBrowseModule = null; // 'catechism'|'bible_stories'|'liturgy_prayers'
+
+  function showView(name){
+    $all('.view').forEach(function(v){ v.classList.remove('active'); });
+    $('#view-'+name).classList.add('active');
+    $all('#tabBar .tab').forEach(function(t){
+      t.classList.toggle('active', t.dataset.view===name ||
+        (name==='browse' && (t.dataset.view===currentBrowseModule)) );
+    });
+    window.scrollTo(0,0);
+  }
+
+  /* ---------- 首页模块卡片 ---------- */
+  function renderHome(){
+    var grid = $('#moduleGrid');
+    var items = [
+      {m:'catechism', icon:'✝', h:'教理问答', p:'慕道班核心考点，分十类整理，点击展开问答。'},
+      {m:'bible_stories', icon:'☉', h:'圣经故事', p:'新旧约故事通俗讲述，附圣经出处与信仰启示。'},
+      {m:'liturgy_prayers', icon:'✦', h:'圣事礼仪与祈祷', p:'七件圣事、弥撒、节期与常用经文全文。'},
+      {m:'quiz_questions', icon:'✎', h:'自测题库', p:'单选/判断/填空/简答，练习与整卷模拟。'}
+    ];
+    grid.innerHTML = items.map(function(it){
+      var n = MODULES[it.m].list.length;
+      return '<button class="module-card" data-go="'+it.m+'">'+
+        '<h3>'+it.icon+' '+it.h+'</h3><p>'+it.p+'</p>'+
+        '<span class="count">共 '+n+' 条</span></button>';
+    }).join('');
+    $all('#moduleGrid .module-card').forEach(function(c){
+      c.addEventListener('click', function(){
+        var m = c.dataset.go;
+        if(m==='quiz_questions'){ openQuizHome(); }
+        else{ openBrowse(m); }
+      });
+    });
+  }
+
+  /* ---------- 通用浏览视图 ---------- */
+  function openBrowse(moduleKey, opt){
+    opt = opt || {};
+    currentBrowseModule = moduleKey;
+    var mod = MODULES[moduleKey];
+    $('#browseTitle').textContent = mod.label;
+    $('#browseDesc').textContent = mod.desc + '（共 '+mod.list.length+' 条）';
+    var g = groupByCat(mod.list);
+
+    // 类别导航
+    var nav = $('#catNav');
+    var chips = ['全部'].concat(g.order);
+    nav.innerHTML = chips.map(function(c,i){
+      var cnt = i===0 ? mod.list.length : g.map[c].length;
+      return '<button class="cat-chip'+(i===0?' active':'')+'" data-cat="'+esc(c)+'">'+esc(c)+'（'+cnt+'）</button>';
+    }).join('');
+    nav.querySelectorAll('.cat-chip').forEach(function(ch){
+      ch.addEventListener('click', function(){
+        nav.querySelectorAll('.cat-chip').forEach(function(x){x.classList.remove('active');});
+        ch.classList.add('active');
+        renderBrowseContent(moduleKey, ch.dataset.cat, opt.expandId);
+      });
+    });
+
+    renderBrowseContent(moduleKey, opt.category || '全部', opt.expandId);
+    showView('browse');
+  }
+
+  function cardBodyHtml(mod, it){
+    var content = esc(it.content);
+    // 保留换行
+    content = content.replace(/\n/g,'<br>');
+    var html = '<p>'+content+'</p>';
+    html += '<div class="source">出处：'+esc(it.source||'')+'</div>';
+    if(it.keywords && it.keywords.length){
+      html += '<div class="kw">关键词：'+esc(it.keywords.join('、'))+'</div>';
+    }
+    return html;
+  }
+
+  function renderBrowseContent(moduleKey, category, expandId){
+    var mod = MODULES[moduleKey];
+    var box = $('#browseContent');
+    var list = mod.list;
+    if(category && category!=='全部'){
+      list = list.filter(function(it){return it.category===category;});
+    }
+    var g = groupByCat(list);
+    var html = g.order.map(function(cat){
+      var items = g.map[cat];
+      var cards = items.map(function(it){
+        return '<div class="card" data-id="'+esc(it.id)+'">'+
+          '<button class="card-head"><span>'+esc(it.title)+'</span><span class="arrow">›</span></button>'+
+          '<div class="card-body">'+cardBodyHtml(mod,it)+'</div></div>';
+      }).join('');
+      return '<div class="cat-group"><h3>'+esc(cat)+'<small>'+items.length+' 条</small></h3>'+cards+'</div>';
+    }).join('');
+    box.innerHTML = html;
+    bindCards(box);
+    if(expandId){
+      var target = box.querySelector('.card[data-id="'+CSS.escape(expandId)+'"]');
+      if(target){
+        target.classList.add('open');
+        setTimeout(function(){ target.scrollIntoView({behavior:'smooth',block:'center'}); }, 80);
+      }
+    }
+  }
+
+  function bindCards(scope){
+    scope.querySelectorAll('.card-head').forEach(function(h){
+      h.addEventListener('click', function(){
+        h.parentElement.classList.toggle('open');
+      });
+    });
+  }
+
+  /* ---------- 搜索 ---------- */
+  function doSearch(kw){
+    kw = (kw||'').trim();
+    if(!kw){ return; }
+    showView('search');
+    $('#searchMeta').textContent = '关键词：「'+kw+'」';
+    var results = {catechism:[], bible_stories:[], liturgy_prayers:[], quiz_questions:[]};
+    var lower = kw.toLowerCase();
+    function hit(it){
+      var hay = [it.title, it.content, it.source, (it.keywords||[]).join(' ')].join(' ').toLowerCase();
+      return hay.indexOf(lower)>=0;
+    }
+    ['catechism','bible_stories','liturgy_prayers','quiz_questions'].forEach(function(m){
+      MODULES[m].list.forEach(function(it){ if(hit(it)) results[m].push(it); });
+    });
+    var total = results.catechism.length+results.bible_stories.length+results.liturgy_prayers.length+results.quiz_questions.length;
+    $('#searchMeta').textContent = '关键词：「'+kw+'」，共 '+total+' 条结果';
+    var box = $('#searchContent');
+    if(total===0){
+      box.innerHTML = '<div class="search-empty"><p>没有找到与「'+esc(kw)+'」相关的内容。</p><p>试试更短或更常见的词，如「圣事」「耶稣」「祈祷」。</p></div>';
+      return;
+    }
+    var modNames = {catechism:'教理问答', bible_stories:'圣经故事', liturgy_prayers:'礼仪祈祷', quiz_questions:'自测题库'};
+    var html = '';
+    ['catechism','bible_stories','liturgy_prayers','quiz_questions'].forEach(function(m){
+      if(!results[m].length) return;
+      html += '<div class="search-group"><h3>'+modNames[m]+'（'+results[m].length+'）</h3>';
+      html += results[m].map(function(it){
+        var body = m==='quiz_questions' ? quizResultBody(it) : cardBodyHtml(MODULES[m], it);
+        return '<div class="card" data-module="'+m+'" data-id="'+esc(it.id)+'">'+
+          '<button class="card-head"><span>'+esc(it.title)+'</span>'+
+          '<span class="arrow">›</span></button>'+
+          '<div class="card-body"><div class="kw">所属类别：'+esc(it.category)+'</div>'+body+'</div></div>';
+      }).join('');
+      html += '</div>';
+    });
+    box.innerHTML = html;
+    bindCards(box);
+    // 浏览类结果点击后跳转定位
+    box.querySelectorAll('.card').forEach(function(c){
+      var h = c.querySelector('.card-head');
+      h.addEventListener('click', function(){
+        var m = c.dataset.module;
+        if(m==='quiz_questions') return; // 已内联展开
+        openBrowse(m, {category: c.querySelector('.kw').textContent.replace('所属类别：','').trim(), expandId: c.dataset.id});
+      });
+    });
+  }
+
+  function quizResultBody(it){
+    var h = '<p>'+esc(it.content).replace(/\n/g,'<br>')+'</p>';
+    if(it.options && it.options.length){
+      h += '<p class="label">选项：</p><p>'+esc(it.options.join('　'))+'</p>';
+    }
+    h += '<p><span class="label">答案：</span>'+esc(it.answer)+'</p>';
+    h += '<p><span class="label">解析：</span>'+esc(it.explanation)+'</p>';
+    h += '<div class="source">出处：'+esc(it.source||'')+'</div>';
+    return h;
+  }
+
+  /* ---------- 自测题库 ---------- */
+  var TYPE_LABEL = {choice:'单选', truefalse:'判断', fill:'填空', essay:'简答'};
+  var practice = {queue:[], idx:0, answers:{}};
+  var mock = {queue:[], idx:0, answers:{}};
+
+  function openQuizHome(){
+    showView('quiz');
+    showOnlyStage('quizHome');
+  }
+  function showOnlyStage(id){
+    ['quizHome','practiceSetup','practiceRun','mockSetup','mockRun','mockResult','historyView'].forEach(function(s){
+      $('#'+s).classList.toggle('hidden', s!==id);
+    });
+  }
+
+  function fillCatSelect(){
+    var sel = $('#practiceCat');
+    var cats = catOrder(D.quiz_questions);
+    sel.innerHTML = '<option value="all">全部类别</option>' +
+      cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(c)+'</option>';}).join('');
+  }
+
+  function startPractice(){
+    var type = $('#practiceType').value;
+    var cat = $('#practiceCat').value;
+    var q = D.quiz_questions.filter(function(it){
+      if(type!=='all' && it.type!==type) return false;
+      if(cat!=='all' && it.category!==cat) return false;
+      return true;
+    });
+    if(!q.length){ alert('该筛选条件下没有题目，请调整。'); return; }
+    practice.queue = q; practice.idx = 0; practice.answers = {};
+    $('#practiceTotal').textContent = '共 '+q.length+' 题';
+    showOnlyStage('practiceRun');
+    renderPracticeQ();
+  }
+
+  function renderPracticeQ(){
+    var it = practice.queue[practice.idx];
+    $('#practicePos').textContent = '第 '+(practice.idx+1)+' / '+practice.queue.length+' 题';
+    $('#practiceBox').innerHTML = questionHtml(it, practice.answers[it.id], 'practice');
+    bindQuestion('#practiceBox', it, 'practice');
+  }
+
+  function questionHtml(it, ans, mode){
+    var h = '<div class="q-card">'+
+      '<div class="q-meta"><span class="q-type">'+TYPE_LABEL[it.type]+'</span>'+esc(it.category)+'</div>'+
+      '<div class="q-stem">'+esc(it.content)+'</div>';
+    if(it.type==='choice'){
+      h += '<div class="q-options">' + it.options.map(function(op,i){
+        var letter = op.trim().charAt(0).toUpperCase();
+        var cls = ans && ans.user===letter ? 'selected' : '';
+        return '<button class="q-opt '+cls+'" data-letter="'+letter+'">'+esc(op)+'</button>';
+      }).join('') + '</div>';
+    } else if(it.type==='truefalse'){
+      h += '<div class="q-options">'+
+        '<button class="q-opt'+(ans&&ans.user==='对'?' selected':'')+'" data-tf="对">对（正确）</button>'+
+        '<button class="q-opt'+(ans&&ans.user==='错'?' selected':'')+'" data-tf="错">错（错误）</button></div>';
+    } else if(it.type==='fill'){
+      h += '<div class="q-fill"><input type="text" id="fillInput" placeholder="请输入答案" value="'+(ans?esc(ans.user):'')+'">'+
+        '<div style="margin-top:8px"><button class="btn primary" id="fillSubmit">提交答案</button></div></div>';
+    } else if(it.type==='essay'){
+      h += '<div class="q-fill"><textarea id="essayInput" rows="4" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;" placeholder="请写下你的回答（仅作练习，不计分）">'+(ans?esc(ans.user):'')+'</textarea>'+
+        '<div style="margin-top:8px"><button class="btn primary" id="essayShow">查看参考答案</button></div></div>';
+    }
+    h += '<div class="q-feedback" id="qFeedback"></div>';
+    h += '<div class="q-source">出处：'+esc(it.source||'')+'</div>';
+    h += '</div>';
+    return h;
+  }
+
+  function feedbackHtml(it, ans, isCorrect){
+    var fb = $('#qFeedback');
+    if(it.type==='essay'){
+      fb.className = 'q-feedback show';
+      fb.style.background = '#fff3d6'; fb.style.color = '#8a6d1a'; fb.style.border = '1px solid #e5d28a';
+      fb.innerHTML = '参考答案（请自行对照）：<span class="exp">'+esc(it.answer)+'</span>'+
+        '<span class="exp"><b>解析：</b>'+esc(it.explanation)+'</span>';
+      return;
+    }
+    var ok = isCorrect;
+    fb.className = 'q-feedback show ' + (ok?'ok':'no');
+    var head = ok ? '✓ 回答正确！' : '✗ 回答错误。';
+    fb.innerHTML = head + ' 正确答案：<b>'+esc(it.answer)+'</b>'+
+      '<span class="exp"><b>解析：</b>'+esc(it.explanation)+'</span>';
+  }
+
+  function gradeAnswer(it, userAns){
+    if(it.type==='choice') return userAns === it.answer.toUpperCase();
+    if(it.type==='truefalse') return userAns === it.answer;
+    if(it.type==='fill') return normalizeFill(userAns) === normalizeFill(it.answer);
+    return null; // essay
+  }
+
+  function bindQuestion(scopeSel, it, mode){
+    var scope = $(scopeSel);
+    var store = mode==='practice' ? practice : mock;
+
+    function save(userAns, judged){
+      store.answers[it.id] = {user:userAns, judged:judged};
+    }
+
+    if(it.type==='choice'){
+      scope.querySelectorAll('.q-opt').forEach(function(b){
+        b.addEventListener('click', function(){
+          if(store.answers[it.id] && store.answers[it.id].judged) return; // 已判分
+          var letter = b.dataset.letter;
+          var ok = gradeAnswer(it, letter);
+          save(letter, true);
+          scope.querySelectorAll('.q-opt').forEach(function(x){
+            var L = x.dataset.letter;
+            x.classList.remove('selected');
+            if(L===it.answer.toUpperCase()) x.classList.add('correct');
+            if(L===letter && !ok) x.classList.add('wrong');
+            if(L===letter && ok) x.classList.add('selected');
+          });
+          feedbackHtml(it, store.answers[it.id], ok);
+        });
+      });
+    } else if(it.type==='truefalse'){
+      scope.querySelectorAll('.q-opt').forEach(function(b){
+        b.addEventListener('click', function(){
+          if(store.answers[it.id] && store.answers[it.id].judged) return;
+          var v = b.dataset.tf;
+          var ok = gradeAnswer(it, v);
+          save(v, true);
+          scope.querySelectorAll('.q-opt').forEach(function(x){
+            var V = x.dataset.tf;
+            x.classList.remove('selected');
+            if(V===it.answer) x.classList.add('correct');
+            if(V===v && !ok) x.classList.add('wrong');
+          });
+          feedbackHtml(it, store.answers[it.id], ok);
+        });
+      });
+    } else if(it.type==='fill'){
+      var sub = scope.querySelector('#fillSubmit');
+      sub.addEventListener('click', function(){
+        if(store.answers[it.id] && store.answers[it.id].judged) return;
+        var v = scope.querySelector('#fillInput').value;
+        var ok = gradeAnswer(it, v);
+        save(v, true);
+        feedbackHtml(it, store.answers[it.id], ok);
+        sub.disabled = true;
+      });
+    } else if(it.type==='essay'){
+      var show = scope.querySelector('#essayShow');
+      show.addEventListener('click', function(){
+        save(scope.querySelector('#essayInput').value, true);
+        feedbackHtml(it, store.answers[it.id], null);
+        show.disabled = true;
+      });
+    }
+  }
+
+  /* 模拟卷 */
+  function startMock(){
+    var n = parseInt($('#mockCount').value,10);
+    var pool = D.quiz_questions.slice();
+    // 洗牌
+    for(var i=pool.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t = pool[i]; pool[i]=pool[j]; pool[j]=t;
+    }
+    mock.queue = pool.slice(0, Math.min(n, pool.length));
+    mock.idx = 0; mock.answers = {};
+    $('#mockTotal').textContent = '共 '+mock.queue.length+' 题';
+    showOnlyStage('mockRun');
+    renderMockQ();
+  }
+  function renderMockQ(){
+    var it = mock.queue[mock.idx];
+    $('#mockPos').textContent = '第 '+(mock.idx+1)+' / '+mock.queue.length+' 题';
+    $('#mockBox').innerHTML = questionHtml(it, mock.answers[it.id], 'mock');
+    bindQuestion('#mockBox', it, 'mock');
+  }
+
+  function submitMock(){
+    var total = mock.queue.length;
+    var unanswered = mock.queue.filter(function(it){ return !mock.answers[it.id]; }).length;
+    if(unanswered>0){
+      if(!confirm('还有 '+unanswered+' 题未作答，确定交卷吗？')) return;
+    }
+    var objective = mock.queue.filter(function(it){return it.type!=='essay';});
+    var correct = 0;
+    objective.forEach(function(it){
+      var a = mock.answers[it.id];
+      if(a && gradeAnswer(it, a.user)) correct++;
+    });
+    var essayCount = total - objective.length;
+    var acc = objective.length ? Math.round(correct/objective.length*100) : 0;
+
+    // 保存成绩
+    try{
+      var hist = JSON.parse(localStorage.getItem('catholic_quiz_history')||'[]');
+      hist.unshift({time:new Date().toLocaleString('zh-CN'), count:total, objective:objective.length,
+        correct:correct, essay:essayCount, acc:acc});
+      localStorage.setItem('catholic_quiz_history', JSON.stringify(hist.slice(0,50)));
+    }catch(e){}
+
+    // 渲染结果
+    $('#resultBox').innerHTML =
+      '<div class="result-score">'+
+        '<div class="big">'+correct+' / '+objective.length+'</div>'+
+        '<div class="sub">正确率 '+acc+'%（共 '+total+' 题，其中简答 '+essayCount+' 题需自行对照参考答案）</div>'+
+      '</div>';
+    showOnlyStage('mockResult');
+  }
+
+  function renderMockReview(){
+    var html = '<div class="result-score"><div class="big">答题回顾</div></div>';
+    mock.queue.forEach(function(it, i){
+      var a = mock.answers[it.id];
+      var badge, body='';
+      if(it.type==='essay'){
+        badge = '<span class="badge manual">简答·自查</span>';
+        body = '<p>你的回答：'+(a?esc(a.user):'<i>未作答</i>')+'</p>'+
+               '<p><span class="label">参考答案：</span>'+esc(it.answer)+'</p>';
+      } else {
+        var ok = a && gradeAnswer(it, a.user);
+        badge = ok ? '<span class="badge right">✓ 正确</span>' : '<span class="badge wrong">✗ 错误</span>';
+        body = '<p>你的答案：<b>'+(a?esc(a.user):'未作答')+'</b>　正确答案：<b>'+esc(it.answer)+'</b></p>';
+      }
+      html += '<div class="review-item"><div class="ri-head"><span>第 '+(i+1)+' 题 · '+TYPE_LABEL[it.type]+' · '+esc(it.category)+'</span>'+badge+'</div>'+
+        '<p style="margin:8px 0">'+esc(it.content)+'</p>'+body+
+        '<p><span class="label">解析：</span>'+esc(it.explanation)+'</p>'+
+        '<p class="q-source">出处：'+esc(it.source||'')+'</p></div>';
+    });
+    $('#resultBox').innerHTML = html;
+    showOnlyStage('mockResult');
+  }
+
+  /* 历史 */
+  function renderHistory(){
+    showOnlyStage('historyView');
+    var hist = [];
+    try{ hist = JSON.parse(localStorage.getItem('catholic_quiz_history')||'[]'); }catch(e){}
+    if(!hist.length){
+      $('#historyList').innerHTML = '<p class="hint">暂无模拟成绩记录。完成一次「整卷模拟」后将自动保存在本机。</p>';
+      return;
+    }
+    var rows = hist.map(function(r,i){
+      return '<tr><td>'+(i+1)+'</td><td>'+esc(r.time)+'</td><td>'+r.count+'</td>'+
+        '<td>'+r.correct+' / '+r.objective+'</td><td>'+r.acc+'%</td><td>'+(r.essay||0)+'</td></tr>';
+    }).join('');
+    $('#historyList').innerHTML =
+      '<div class="table-wrap"><table class="hist-table"><thead><tr><th>#</th><th>时间</th><th>题数</th><th>答对(客观)</th><th>正确率</th><th>简答数</th></tr></thead>'+
+      '<tbody>'+rows+'</tbody></table></div>';
+  }
+
+  /* ---------- 事件绑定 ---------- */
+  function bind(){
+    // tab
+    $all('#tabBar .tab').forEach(function(t){
+      t.addEventListener('click', function(){
+        var v = t.dataset.view;
+        if(v==='home'){ showView('home'); }
+        else if(v==='quiz'){ openQuizHome(); }
+        else { openBrowse(v); }
+      });
+    });
+    $('#btnHome').addEventListener('click', function(){ showView('home'); });
+
+    // 搜索
+    function triggerSearch(){
+      var kw = ($('#globalSearch').value || $('#homeSearch').value || '').trim();
+      if(kw){ $('#homeSearch').value = kw; $('#globalSearch').value = kw; doSearch(kw); }
+    }
+    $('#globalSearch').addEventListener('keydown', function(e){ if(e.key==='Enter') triggerSearch(); });
+    $('#homeSearch').addEventListener('keydown', function(e){ if(e.key==='Enter') triggerSearch(); });
+
+    // quiz mode
+    $('#modePractice').addEventListener('click', function(){ showOnlyStage('practiceSetup'); });
+    $('#modeMock').addEventListener('click', function(){ showOnlyStage('mockSetup'); });
+    $('#modeHistory').addEventListener('click', renderHistory);
+    $('#practiceBack').addEventListener('click', openQuizHome);
+    $('#mockBack').addEventListener('click', openQuizHome);
+    $('#historyBack').addEventListener('click', openQuizHome);
+
+    $('#btnStartPractice').addEventListener('click', startPractice);
+    $('#practicePrev').addEventListener('click', function(){
+      if(practice.idx>0){ practice.idx--; renderPracticeQ(); }
+    });
+    $('#practiceNext').addEventListener('click', function(){
+      if(practice.idx<practice.queue.length-1){ practice.idx++; renderPracticeQ(); }
+    });
+    $('#practiceQuit').addEventListener('click', openQuizHome);
+
+    $('#btnStartMock').addEventListener('click', startMock);
+    $('#mockPrev').addEventListener('click', function(){
+      if(mock.idx>0){ mock.idx--; renderMockQ(); }
+    });
+    $('#mockNext').addEventListener('click', function(){
+      if(mock.idx<mock.queue.length-1){ mock.idx++; renderMockQ(); }
+    });
+    $('#mockSubmit').addEventListener('click', submitMock);
+    $('#mockReviewBtn').addEventListener('click', renderMockReview);
+    $('#mockResultBack').addEventListener('click', openQuizHome);
+
+    $('#btnClearHistory').addEventListener('click', function(){
+      if(confirm('确定清除全部历史成绩？此操作不可恢复。')){
+        localStorage.removeItem('catholic_quiz_history');
+        renderHistory();
+      }
+    });
+  }
+
+  /* ---------- 启动 ---------- */
+  document.addEventListener('DOMContentLoaded', function(){
+    renderHome();
+    fillCatSelect();
+    bind();
+    showView('home');
+  });
+})();
+
+</script>
+</body>
+</html>
